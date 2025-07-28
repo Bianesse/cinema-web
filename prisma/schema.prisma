@@ -1,0 +1,207 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  email       String   @unique @db.VarChar(100)
+  phone       String?  @db.VarChar(20)
+  passwordHash String  @map("password_hash") @db.VarChar(255)
+  role        Role     @default(USER)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  bookings Booking[]
+
+  @@map("users")
+}
+
+model Cinema {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  location   String   @db.VarChar(255)
+  address    String?
+  totalHalls Int      @default(1) @map("total_halls")
+  facilities String[]
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  halls Hall[]
+
+  @@map("cinemas")
+}
+
+model Movie {
+  id          Int           @id @default(autoincrement())
+  title       String        @db.VarChar(200)
+  genre       String[]
+  duration    Int // in minutes
+  rating      MovieRating?
+  synopsis    String?
+  posterUrl   String?       @map("poster_url") @db.VarChar(500)
+  trailerUrl  String?       @map("trailer_url") @db.VarChar(500)
+  director    String?       @db.VarChar(100)
+  cast        String[]
+  releaseDate DateTime?     @map("release_date") @db.Date
+  status      MovieStatus   @default(COMING_SOON)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  showtimes Showtime[]
+
+  @@map("movies")
+}
+
+model Hall {
+  id         Int      @id @default(autoincrement())
+  cinemaId   Int      @map("cinema_id")
+  hallNumber Int      @map("hall_number")
+  hallName   String?  @map("hall_name") @db.VarChar(50)
+  totalSeats Int      @map("total_seats")
+  hallType   HallType @default(REGULAR) @map("hall_type")
+
+  // Relations
+  cinema    Cinema     @relation(fields: [cinemaId], references: [id], onDelete: Cascade)
+  seats     Seat[]
+  showtimes Showtime[]
+
+  @@unique([cinemaId, hallNumber])
+  @@map("halls")
+}
+
+model Seat {
+  id         Int      @id @default(autoincrement())
+  hallId     Int      @map("hall_id")
+  seatRow    String   @map("seat_row") @db.Char(1)
+  seatNumber Int      @map("seat_number")
+  seatType   SeatType @default(REGULAR) @map("seat_type")
+
+  // Relations
+  hall         Hall          @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  bookingSeats BookingSeat[]
+
+  @@unique([hallId, seatRow, seatNumber])
+  @@map("seats")
+}
+
+model Showtime {
+  id             Int      @id @default(autoincrement())
+  movieId        Int      @map("movie_id")
+  hallId         Int      @map("hall_id")
+  showDate       DateTime @map("show_date") @db.Date
+  showTime       DateTime @map("show_time") @db.Time
+  price          Decimal  @db.Decimal(10, 2)
+  availableSeats Int      @map("available_seats")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  // Relations
+  movie    Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  hall     Hall      @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@map("showtimes")
+}
+
+model Booking {
+  id            Int           @id @default(autoincrement())
+  userId        Int?          @map("user_id")
+  showtimeId    Int           @map("showtime_id")
+  bookingCode   String        @unique @map("booking_code") @db.VarChar(20)
+  totalAmount   Decimal       @map("total_amount") @db.Decimal(10, 2)
+  bookingStatus BookingStatus @default(PENDING) @map("booking_status")
+  paymentStatus PaymentStatus @default(PENDING) @map("payment_status")
+  paymentMethod String?       @map("payment_method") @db.VarChar(50)
+  bookingDate   DateTime      @default(now()) @map("booking_date")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  showtime     Showtime      @relation(fields: [showtimeId], references: [id], onDelete: Cascade)
+  bookingSeats BookingSeat[]
+  payments     Payment[]
+
+  @@map("bookings")
+}
+
+model BookingSeat {
+  id        Int @id @default(autoincrement())
+  bookingId Int @map("booking_id")
+  seatId    Int @map("seat_id")
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  seat    Seat    @relation(fields: [seatId], references: [id], onDelete: Cascade)
+
+  @@unique([bookingId, seatId])
+  @@map("booking_seats")
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  bookingId     Int           @map("booking_id")
+  paymentMethod String        @map("payment_method") @db.VarChar(50)
+  amount        Decimal       @db.Decimal(10, 2)
+  transactionId String?       @map("transaction_id") @db.VarChar(100)
+  status        PaymentStatus @default(PENDING)
+  paymentDate   DateTime?     @map("payment_date")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// Enums
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MovieRating {
+  G
+  PG
+  PG_13 @map("PG-13")
+  R
+}
+
+enum MovieStatus {
+  COMING_SOON
+  NOW_SHOWING
+  ENDED
+}
+
+enum HallType {
+  REGULAR
+  IMAX
+  FOUR_DX @map("4DX")
+  DOLBY_ATMOS
+}
+
+enum SeatType {
+  REGULAR
+  PREMIUM
+  VIP
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
