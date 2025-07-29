@@ -55,8 +55,6 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
     },
   });
 
-
-
   if (!movie) {
     return new Response(JSON.stringify({ error: "Movie not found" }), {
       status: 404,
