@@ -16,7 +16,7 @@ interface MovieCardProps {
 
 export default function MovieCard({ index, movie, }: MovieCardProps) {
     return (
-        <div key={index} className="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
+        <div key={index} className="bg-white flex flex-col rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
             <div className="relative">
                 <img
                     src={movie.posterUrl}
@@ -34,7 +34,8 @@ export default function MovieCard({ index, movie, }: MovieCardProps) {
                     </div>
                 </div>
             </div>
-            <div className="p-6">
+
+            <div className="p-6 flex flex-col flex-1 justify-between">
                 <h3 className="text-2xl font-bold text-amber-900 mb-2">{movie.title}</h3>
                 <div className="flex flex-wrap gap-1 mb-3">
                     {movie.genre.map((genre: string, index: number) => (
@@ -44,8 +45,8 @@ export default function MovieCard({ index, movie, }: MovieCardProps) {
                     ))}
                 </div>
 
-                <p className="text-amber-700 mb-4 line-clamp-3">{movie.synopsis}</p>
-                <button className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-all">
+                {/* <p className="text-amber-700 line-clamp-3">{movie.synopsis}</p> */}
+                <button className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-all mt-4">
                     Book Tickets
                 </button>
             </div>
