@@ -15,3 +15,9 @@ export interface CinemaType {
     halls: number;
     facilities: string[];
 }
+
+export interface MoviePageProps {
+    params: {
+      id: string;
+    };
+  }
