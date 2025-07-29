@@ -28,7 +28,7 @@ export default function Movies() {
                             ? "bg-amber-600 text-white hover:bg-amber-700"
                             : "bg-amber-100 text-amber-600 hover:bg-amber-200"
                         }`}
-                    onClick={() => setMovieStatus("NOW_SHOWING")}
+                    onClick={() => [setMovieStatus("NOW_SHOWING"), setLoading(true)]}
                 >
                     Now Showing
                 </button>
@@ -38,7 +38,7 @@ export default function Movies() {
                             ? "bg-amber-600 text-white hover:bg-amber-700"
                             : "bg-amber-100 text-amber-600 hover:bg-amber-200"
                         }`}
-                    onClick={() => setMovieStatus("COMING_SOON")}
+                    onClick={() => [setMovieStatus("COMING_SOON"), setLoading(true)]}
                 >
                     Coming Soon
                 </button>
