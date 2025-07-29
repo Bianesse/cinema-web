@@ -2,6 +2,7 @@ import { Play, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 export default function Nav() {
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     return (
         < nav className="bg-amber-900/95 backdrop-blur-sm text-amber-50 sticky top-0 z-50 shadow-lg" >

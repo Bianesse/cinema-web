@@ -4,6 +4,8 @@ import { Play, Calendar, MapPin, Star, Users, Clock, Ticket, ChevronDown, Menu, 
 import Nav from '@/components/layouts/nav';
 import MovieCard from '@/components/movie/MovieCard';
 import LocationCard from '@/components/movie/LocationCard';
+import MovieCardSkeleton from '@/components/skeleton/MovieCardSkeleton';
+import LocationCardSkeleton from '@/components/skeleton/LoationCardSkeleton';
 
 interface Movie {
   id: number;
@@ -28,6 +30,7 @@ const CinemaLandingPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
   const [locations, setLocations] = useState<Cinema[]>([]);
+  const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
@@ -36,6 +39,7 @@ const CinemaLandingPage = () => {
       const data = await res.json();
       setFeaturedMovies(data.featuredMovie);
       setLocations(data.location);
+      setLoading(false);
     }
 
     fetchLanding();
@@ -80,14 +84,17 @@ const CinemaLandingPage = () => {
       {/* Hero Section */}
       <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-amber-900/80 to-orange-900/60 z-10"></div>
-        {/* <div 
-          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
-          style={{
-            backgroundImage: `url(${featuredMovies[currentSlide].posterUrl})`,
-            filter: 'blur(8px)',
-            transform: 'scale(1.1)'
-          }}
-        ></div> */}
+        {featuredMovies.length > 1 && (
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+            style={{
+              backgroundImage: `url(${featuredMovies[1].posterUrl})`,
+              filter: 'blur(8px)',
+              transform: 'scale(1.1)'
+            }}
+          ></div>
+        )}
+
 
         <div className="relative z-20 text-center text-white max-w-4xl mx-auto px-4">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-pulse">
@@ -121,10 +128,17 @@ const CinemaLandingPage = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {featuredMovies.map((movie, index) => (
-              <MovieCard key={index} index={index} movie={movie} />
-            ))}
+            {loading
+              ?
+              Array.from({ length: 3 }).map((_, index) => (
+                <MovieCardSkeleton key={index} />
+              ))
+              :
+              featuredMovies.map((movie, index) => (
+                <MovieCard key={index} index={index} movie={movie} />
+              ))}
           </div>
+
 
         </div>
       </section>
@@ -160,9 +174,15 @@ const CinemaLandingPage = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {locations.map((cinema, index) => (
-              <LocationCard key={index} index={index} cinema={cinema} />
-            ))}
+            {loading
+              ?
+              Array.from({ length: 3 }).map((_, index) => (
+                <LocationCardSkeleton key={index} />
+              ))
+              :
+              locations.map((cinema, index) => (
+                <LocationCard key={index} index={index} cinema={cinema} />
+              ))}
           </div>
         </div>
       </section>
