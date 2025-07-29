@@ -12,7 +12,7 @@ export default function Nav() {
                         <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
                             <Play className="w-4 h-4 text-amber-900" />
                         </div>
-                        <span className="text-xl font-bold">CinemaMax</span>
+                        <span className="text-xl font-bold">Cinemax</span>
                     </div>
 
                     {/* Desktop Navigation */}
