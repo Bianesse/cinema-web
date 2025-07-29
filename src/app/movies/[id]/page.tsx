@@ -1,9 +1,26 @@
-import { use } from "react";
+'use client'
+import { MovieType } from "@/types";
+import { use, useEffect, useState } from "react";
 export default function Movie({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params) ;
+    const [movie, setMovie] = useState<MovieType | null>(null);
+
+    useEffect(() => {
+        fetch(`/api/movie/${id}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setMovie(data);
+            });
+    }, []);
+
+    if (!movie) {
+        return <div>Loading...</div>; // or your skeleton
+      }
+    
     return (
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
-            <h1>Specific Movie {id}</h1>
-        </div>
+        <section id="movie">
+            <h1 className="text-4xl font-bold">Film Detail</h1>
+            
+        </section>
     );
 }
