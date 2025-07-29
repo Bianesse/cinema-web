@@ -6,6 +6,7 @@ export interface MovieType {
     duration: number;
     posterUrl: string;
     synopsis: string
+    releaseDate: string
 }
 
 export interface CinemaType {

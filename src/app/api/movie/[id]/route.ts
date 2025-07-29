@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
@@ -19,16 +19,53 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
     },
   });
 
+  const cinemas = await prisma.cinema.findMany({
+    where: {
+      halls: {
+        some: {
+          showtimes: {
+            some: {
+              movieId: id,
+            },
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      location: true,
+      halls: {
+        select: {
+          id: true,
+          hallName: true,
+          showtimes: {
+            where: {
+              movieId: id,
+            },
+            select: {
+              id: true,
+              showDate: true,
+              showTime: true,
+              price: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+
+
   if (!movie) {
     return new Response(JSON.stringify({ error: "Movie not found" }), {
       status: 404,
     });
   }
 
-  return new Response(JSON.stringify(movie), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  return NextResponse.json({
+    movie,
+    cinemas,
+  }
+  );
 }

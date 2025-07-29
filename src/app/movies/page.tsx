@@ -23,15 +23,27 @@ export default function Movies() {
         <section id="movies" >
             <h1 className="text-4xl font-bold">Movies</h1>
             <div className="flex flex-row items-center space-x-4 my-5">
-                <button className="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-all"
-                    onClick={() => setMovieStatus("NOW_SHOWING")}>
+                <button
+                    className={`px-4 py-2 rounded-lg transition-all ${movieStatus === "NOW_SHOWING"
+                            ? "bg-amber-600 text-white hover:bg-amber-700"
+                            : "bg-amber-100 text-amber-600 hover:bg-amber-200"
+                        }`}
+                    onClick={() => setMovieStatus("NOW_SHOWING")}
+                >
                     Now Showing
                 </button>
-                <button className="bg-amber-100 text-amber-600 px-4 py-2 rounded-lg hover:bg-amber-200 transition-all"
-                    onClick={() => setMovieStatus("COMING_SOON")}>
+
+                <button
+                    className={`px-4 py-2 rounded-lg transition-all ${movieStatus === "COMING_SOON"
+                            ? "bg-amber-600 text-white hover:bg-amber-700"
+                            : "bg-amber-100 text-amber-600 hover:bg-amber-200"
+                        }`}
+                    onClick={() => setMovieStatus("COMING_SOON")}
+                >
                     Coming Soon
                 </button>
             </div>
+
 
             <div className="grid md:grid-cols-4 gap-8">
                 {loading
