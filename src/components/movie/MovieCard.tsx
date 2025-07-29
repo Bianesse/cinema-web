@@ -1,7 +1,16 @@
 import { Clock } from "lucide-react";
+
+interface Movie {
+    id: number;
+    title: string;
+    genre: string[];
+    rating: string;
+    duration: number;
+    posterUrl: string;
+}
 interface MovieCardProps {
     index: number
-    movie: any
+    movie: Movie
 }
 
 export default function MovieCard({ index, movie, }: MovieCardProps) {

@@ -5,10 +5,30 @@ import Nav from '@/components/layouts/nav';
 import MovieCard from '@/components/movie/MovieCard';
 import LocationCard from '@/components/movie/LocationCard';
 
+interface Movie {
+  id: string;
+  title: string;
+  poster: string;
+  rating: string;
+  duration: number;
+  genre: string[];
+  synopsis: string;
+}
+
+interface Cinema {
+  id: string;
+  name: string;
+  location: string;
+  halls: number;
+  facilities: string[];
+}
+
+
 const CinemaLandingPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [featuredMovies, setFeaturedMovies] = useState<any[]>([]);
-  const [locations, setLocations] = useState<any[]>([]);
+  const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
+  const [locations, setLocations] = useState<Cinema[]>([]);
+
 
   useEffect(() => {
     async function fetchLanding() {
@@ -53,7 +73,7 @@ const CinemaLandingPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
-      
+
       {/* Navigation Bar */}
       <Nav></Nav>
 
@@ -68,7 +88,7 @@ const CinemaLandingPage = () => {
             transform: 'scale(1.1)'
           }}
         ></div> */}
-        
+
         <div className="relative z-20 text-center text-white max-w-4xl mx-auto px-4">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-pulse">
             Experience Cinema
