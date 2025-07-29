@@ -7,6 +7,7 @@ interface Movie {
     rating: string;
     duration: number;
     posterUrl: string;
+    synopsis: string
 }
 interface MovieCardProps {
     index: number

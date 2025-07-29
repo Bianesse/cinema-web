@@ -1,6 +1,7 @@
 // prisma/seed.ts
-import { PrismaClient, SeatType, HallType, Role, MovieStatus, MovieRating, BookingStatus, PaymentStatus, Decimal } from '@prisma/client';
+import { Prisma, PrismaClient, SeatType, HallType, Role, MovieStatus, MovieRating, BookingStatus, PaymentStatus } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import Decimal from 'decimal.js';
 
 const prisma = new PrismaClient();
 

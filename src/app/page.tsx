@@ -6,13 +6,13 @@ import MovieCard from '@/components/movie/MovieCard';
 import LocationCard from '@/components/movie/LocationCard';
 
 interface Movie {
-  id: string;
+  id: number;
   title: string;
-  poster: string;
+  genre: string[];
   rating: string;
   duration: number;
-  genre: string[];
-  synopsis: string;
+  posterUrl: string;
+  synopsis: string
 }
 
 interface Cinema {
