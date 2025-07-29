@@ -46,7 +46,7 @@ export default function MovieCard({ index, movie, }: MovieCardProps) {
                 </div>
 
                 {/* <p className="text-amber-700 line-clamp-3">{movie.synopsis}</p> */}
-                <button className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-all mt-4">
+                <button className="w-full py-2 border border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white rounded-lg transition-all mt-4">
                     Book Tickets
                 </button>
             </div>

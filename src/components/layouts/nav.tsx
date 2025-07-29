@@ -1,4 +1,5 @@
 import { Play, Menu, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Nav() {
@@ -12,7 +13,9 @@ export default function Nav() {
                         <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
                             <Play className="w-4 h-4 text-amber-900" />
                         </div>
-                        <span className="text-xl font-bold">Cinemax</span>
+                        <Link href="/">
+                            <span className="text-xl font-bold">Cinemax</span>
+                        </Link>
                     </div>
 
                     {/* Desktop Navigation */}

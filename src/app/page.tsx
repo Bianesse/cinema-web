@@ -118,7 +118,9 @@ const CinemaLandingPage = () => {
               ))
               :
               featuredMovies.map((movie, index) => (
-                <MovieCard key={index} index={index} movie={movie} />
+                <Link href={`/movies/${movie.id}`} key={index} >
+                  <MovieCard key={index} index={index} movie={movie} />
+                </Link>
               ))}
           </div>
 

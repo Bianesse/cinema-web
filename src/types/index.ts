@@ -5,7 +5,10 @@ export interface MovieType {
     rating: string;
     duration: number;
     posterUrl: string;
-    synopsis: string
+    synopsis: string;
+    releaseDate: string;
+    director: string;
+    cast: string[];
 }
 
 export interface CinemaType {
