@@ -1,67 +1,37 @@
 'use client'
-import React from 'react';
-import { 
+
+import React from 'react'
+import { MovieType } from '@/types'
+import MovieTableSkeleton from '../skeleton/MovieTableSkeleton'
+import {
   Plus,
   Search,
   Filter,
   Eye,
   Edit,
   Trash2
-} from 'lucide-react';
+} from 'lucide-react'
 
 const MoviesPage = () => {
-  const movies = [
-    { 
-      id: 1, 
-      title: 'Epic Adventure', 
-      genre: ['Action', 'Adventure'], 
-      duration: 142, 
-      rating: 'PG-13',
-      status: 'Now Showing',
-      bookings: 245,
-      revenue: '$6,125'
-    },
-    { 
-      id: 2, 
-      title: 'Romantic Nights', 
-      genre: ['Romance', 'Drama'], 
-      duration: 118, 
-      rating: 'PG',
-      status: 'Now Showing',
-      bookings: 189,
-      revenue: '$5,670'
-    },
-    { 
-      id: 3, 
-      title: 'Space Odyssey', 
-      genre: ['Sci-Fi', 'Thriller'], 
-      duration: 156, 
-      rating: 'PG-13',
-      status: 'Coming Soon',
-      bookings: 0,
-      revenue: '$0'
-    },
-    { 
-      id: 4, 
-      title: 'Comedy Gold', 
-      genre: ['Comedy'], 
-      duration: 95, 
-      rating: 'PG',
-      status: 'Now Showing',
-      bookings: 156,
-      revenue: '$3,900'
-    },
-    { 
-      id: 5, 
-      title: 'Horror Night', 
-      genre: ['Horror', 'Thriller'], 
-      duration: 108, 
-      rating: 'R',
-      status: 'Ended',
-      bookings: 89,
-      revenue: '$2,225'
-    },
-  ];
+  const [movies, setMovies] = React.useState<MovieType[]>([])
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch('/api/admin/movies')
+        const data = await response.json()
+        setMovies(data)
+      } catch (err) {
+        console.error('Failed to fetch movies:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchMovies()
+  }, [])
+
+  if (loading) return <MovieTableSkeleton />
 
   return (
     <div className="space-y-6">
@@ -155,7 +125,7 @@ const MoviesPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MoviesPage;
+export default MoviesPage

@@ -4,17 +4,66 @@ import { NextRequest } from "next/server";
 const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
-    const status = req.nextUrl.searchParams.get('status') || 'NOW_SHOWING';
-    const data = await prisma.movie.findMany({
+    const movies = await prisma.movie.findMany();
+
+    const payments = await prisma.payment.findMany({
         where: {
-            status: status as 'NOW_SHOWING' | 'COMING_SOON',
+            status: "PAID",
+        },
+        include: {
+            booking: {
+                include: {
+                    showtime: {
+                        include: {
+                            movie: true,
+                        },
+                    },
+                },
+            },
         },
     });
 
-    return new Response(JSON.stringify(data), {
+    const bookingSeats = await prisma.bookingSeat.findMany({
+        include: {
+            booking: {
+                include: {
+                    showtime: {
+                        include: {
+                            movie: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    const revenueMap: Record<number, number> = {};
+    const bookedMap: Record<number, number> = {};
+
+    for (const payment of payments) {
+        const movie = payment.booking?.showtime?.movie;
+        if (!movie) continue;
+
+        revenueMap[movie.id] = (revenueMap[movie.id] || 0) + Number(payment.amount);
+    }
+
+    for (const seat of bookingSeats) {
+        const movie = seat.booking?.showtime?.movie;
+        if (!movie) continue;
+
+        bookedMap[movie.id] = (bookedMap[movie.id] || 0) + 1;
+    }
+
+    const movieWithStats = movies.map((movie) => ({
+        ...movie,
+        revenue: revenueMap[movie.id] ?? 0,
+        bookings: bookedMap[movie.id] ?? 0,
+    }));
+
+    return new Response(JSON.stringify(movieWithStats), {
         status: 200,
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
     });
 }

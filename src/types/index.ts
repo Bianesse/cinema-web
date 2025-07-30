@@ -9,6 +9,9 @@ export interface MovieType {
     releaseDate: string;
     director: string;
     cast: string[];
+    status: string;
+    bookings: number;
+    revenue: number;
 }
 
 export interface CinemaType {
