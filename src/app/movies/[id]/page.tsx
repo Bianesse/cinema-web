@@ -126,10 +126,12 @@ export default function Movie({ params }: { params: Promise<{ id: string }> }) {
                     <div className="mt-4">
                         <div className="p-5 w-full rounded-lg bg-white shadow-lg space-y-4">
 
+                            {/* Synopsis */}
                             <div>
                                 <h2 className="text-lg font-semibold text-amber-900 mb-1">Synopsis</h2>
                                 <p className="text-gray-700">{movie.synopsis}</p>
                             </div>
+
                             {/* Director */}
                             <div>
                                 <h2 className="text-lg font-semibold text-amber-900 mb-1">Director</h2>
