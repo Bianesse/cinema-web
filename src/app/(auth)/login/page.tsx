@@ -3,6 +3,7 @@ import { Play, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -32,7 +33,7 @@ export default function LoginPage() {
             console.error(response.error);
             setLoading(false);
             return;
-        }else{
+        } else {
             router.push('/');
         }
     };
@@ -111,13 +112,13 @@ export default function LoginPage() {
                         </div>
 
                         {/* Remember Me and Forgot Password */}
-                        {/* <div className="flex items-center justify-end">
+                        <div className="flex items-center justify-end">
                             <div className="text-sm">
                                 <button className="font-medium text-amber-600 hover:text-amber-500 transition-colors">
                                     Forgot password?
                                 </button>
                             </div>
-                        </div> */}
+                        </div>
 
                         {/* Login Button */}
                         <button
@@ -175,9 +176,12 @@ export default function LoginPage() {
                     <div className="mt-8 text-center">
                         <p className="text-sm text-amber-700">
                             Don&apos;t have an account?{' '}
-                            <button className="font-semibold text-amber-600 hover:text-amber-500 transition-colors">
-                                Sign up for free
-                            </button>
+                            <Link href="/signup">
+                                <button className="font-semibold text-amber-600 hover:text-amber-500 transition-colors">
+                                    Sign up for free
+                                </button>
+                            </Link>
+
                         </p>
                     </div>
                 </div>
