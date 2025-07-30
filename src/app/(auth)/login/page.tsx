@@ -1,7 +1,42 @@
+'use client'
 import { Play, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+    const router = useRouter();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        const response = await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false
+        })
+
+        if (response?.error) {
+            alert(response.error);
+            console.error(response.error);
+            setLoading(false);
+            return;
+        }else{
+            router.push('/');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
             <div className="w-full max-w-lg relative z-10">
@@ -35,8 +70,8 @@ export default function LoginPage() {
                                     type="email"
                                     id="email"
                                     name="email"
-                                    /* value={formData.email}
-                                    onChange={handleInputChange} */
+                                    value={formData.email}
+                                    onChange={handleInputChange}
                                     className="w-full p-4 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-amber-900 placeholder-amber-400 transition-all duration-200"
                                     placeholder="Enter your email"
                                 />
@@ -53,24 +88,24 @@ export default function LoginPage() {
                                     <Lock className="h-5 w-5 text-amber-500" />
                                 </div>
                                 <input
-                                    /* type={showPassword ? "text" : "password"} */
+                                    type={showPassword ? "text" : "password"}
                                     id="password"
                                     name="password"
-                                    /* value={formData.password}
-                                    onChange={handleInputChange} */
+                                    value={formData.password}
+                                    onChange={handleInputChange}
                                     className="w-full p-4 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-amber-900 placeholder-amber-400 transition-all duration-200"
                                     placeholder="Enter your password"
                                 />
                                 <button
                                     type="button"
                                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                                    /* onClick={() => setShowPassword(!showPassword)} */
+                                    onClick={() => setShowPassword(!showPassword)}
                                 >
-                                    {/* {showPassword ? (
+                                    {showPassword ? (
                                         <EyeOff className="h-5 w-5 text-amber-500 hover:text-amber-600 transition-colors" />
                                     ) : (
                                         <Eye className="h-5 w-5 text-amber-500 hover:text-amber-600 transition-colors" />
-                                    )} */}
+                                    )}
                                 </button>
                             </div>
                         </div>
@@ -86,18 +121,18 @@ export default function LoginPage() {
 
                         {/* Login Button */}
                         <button
-                            /* onClick={handleSubmit}
-                            disabled={isLoading} */
+                            onClick={handleSubmit}
+                            disabled={loading}
                             className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] transition-all duration-200"
                         >
-                            {/* {isLoading ? (
+                            {loading ? (
                                 <div className="flex items-center space-x-2">
                                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                     <span>Signing in...</span>
                                 </div>
                             ) : (
                                 'Sign In'
-                            )} */}
+                            )}
                         </button>
 
                         {/* Social Login Divider */}

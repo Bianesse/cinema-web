@@ -1,7 +1,13 @@
-export default function Dashboard() {
-    return (
-        <div>
-            <h1>Admin Dashboard </h1>
-        </div>
-    );
+import { auth } from "@/auth"
+ 
+export default async function UserAvatar() {
+  const session = await auth()
+ 
+  if (!session?.user) return null
+ 
+  return (
+    <div>
+      <p>{session.user.role}</p>
+    </div>
+  )
 }

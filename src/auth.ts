@@ -1,0 +1,64 @@
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { z } from "zod";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+
+const prisma = new PrismaClient();
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  providers: [
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const schema = z.object({
+          email: z.email(),
+          password: z.string().min(6),
+        });
+
+        const { email, password } = schema.parse(credentials);
+
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (!user) throw new Error("No user found");
+        if (!user.passwordHash) throw new Error("No password set for user");
+        const valid = await bcrypt.compare(password, user.passwordHash);
+        if (!valid) throw new Error("Invalid password");
+
+        return {
+          id: user.id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
+      },
+
+    }),
+  ],
+  callbacks: {
+    async session({ session, token, user }) {
+      // Attach role to session
+      if (token?.role) {
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      // First time login, user exists
+      if (user) {
+        token.role = user.role;
+      }
+      return token;
+    },
+  },
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.AUTH_SECRET,
+});
