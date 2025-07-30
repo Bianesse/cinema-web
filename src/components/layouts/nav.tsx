@@ -1,3 +1,4 @@
+import { signOut } from "next-auth/react";
 import { Play, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -27,9 +28,15 @@ export default function Nav() {
                     </div>
 
                     <div className="hidden md:flex space-x-4">
-                        <button className="px-4 py-2 border border-amber-200 rounded-lg hover:bg-amber-200 hover:text-amber-900 transition-all">
-                            Sign In
+                        <button className="px-4 py-2 border border-amber-200 rounded-lg hover:bg-amber-200 hover:text-amber-900 transition-all"
+                            onClick={() => signOut()}>
+                            Sign Out
                         </button>
+                        <Link href="/login">
+                            <button className="px-4 py-2 border border-amber-200 rounded-lg hover:bg-amber-200 hover:text-amber-900 transition-all">
+                                Sign In
+                            </button>
+                        </Link>
                         <button className="px-4 py-2 bg-amber-200 text-amber-900 rounded-lg hover:bg-amber-300 transition-all font-medium">
                             Book Now
                         </button>
@@ -53,6 +60,10 @@ export default function Nav() {
                             <a href="#cinemas" className="hover:text-amber-200 transition-colors">Cinemas</a>
                             <a href="#about" className="hover:text-amber-200 transition-colors">About</a>
                             <div className="flex flex-col space-y-2 pt-2">
+                                <button className="px-4 py-2 border border-amber-200 rounded-lg hover:bg-amber-200 hover:text-amber-900 transition-all"
+                                    onClick={() => signOut()}>
+                                    Sign Out
+                                </button>
                                 <button className="px-4 py-2 border border-amber-200 rounded-lg hover:bg-amber-200 hover:text-amber-900 transition-all">
                                     Sign In
                                 </button>
