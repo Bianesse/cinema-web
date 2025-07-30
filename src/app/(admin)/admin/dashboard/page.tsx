@@ -1,15 +1,31 @@
 'use client'
-import { useSession } from "next-auth/react"
- 
-export default function UserAvatar() {
-  const { data: session } = useSession();
+import React, { useState } from 'react';
+import AdminLayout from '@/components/adminPage/AdminLayout';
+import AdminDashboard from '@/components/adminPage/AdminDashboard';
+import AdminMovies from '@/components/adminPage/AdminMovies';
+import AdminLocation from '@/components/adminPage/AdminLocation';
 
- 
-  if (!session?.user) return null
- 
+const AdminMain = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return <AdminDashboard />;
+      case 'movies':
+        return <AdminMovies />;
+      case 'locations':
+        return <AdminLocation />;
+      default:
+        return <AdminDashboard />;
+    }
+  };
+
   return (
-    <div>
-      <p>{session.user.role}</p>
-    </div>
-  )
-}
+    <AdminLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+      {renderContent()}
+    </AdminLayout>
+  );
+};
+
+export default AdminMain;
