@@ -90,9 +90,15 @@ export async function POST(req: NextRequest) {
             status: 201,
             headers: { "Content-Type": "application/json" },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
+        let message = "Unknown error";
+    
+        if (error instanceof Error) {
+            message = error.message;
+        }
+    
         console.error("Failed to create movie:", error);
-        return new Response(JSON.stringify({ error: "Failed to create movie", details: error.message }), {
+        return new Response(JSON.stringify({ error: "Failed to create movie", details: message }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
         });
