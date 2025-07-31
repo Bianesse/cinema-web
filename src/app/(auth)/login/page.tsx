@@ -4,6 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -13,6 +14,10 @@ export default function LoginPage() {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const errorMessages: Record<string, string> = {
+        CredentialsSignin: "Something went wrong on our end. Please try again later.",
+        Configuration: "Invalid email or password. Please try again.",
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -22,15 +27,18 @@ export default function LoginPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+
         const response = await signIn('credentials', {
             email: formData.email,
             password: formData.password,
-            redirect: false
-        })
+            redirect: false,
+        });
 
         if (response?.error) {
-            alert(response.error);
-            console.error(response.error);
+            const errorMessage = errorMessages[response.error] || "An unexpected error occurred.";
+
+            toast.error(errorMessage);
+            /* console.error(response.error); */ // Log the raw error for debugging
             setLoading(false);
             return;
         } else {
