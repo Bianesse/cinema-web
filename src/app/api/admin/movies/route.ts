@@ -69,18 +69,41 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const body = await req.json();
-    const data = await prisma.movie.create({
-        data: body,
-    });
+    try {
+        const body = await req.json();
+        console.log("Incoming movie data:", body);
 
-    return new Response(JSON.stringify(data), {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+        const data = await prisma.movie.create({
+            data: {
+                title: body.title,
+                genre: body.genre,
+                rating: body.rating,
+                duration: Number(body.duration),
+                synopsis: body.synopsis,
+                posterUrl: body.posterUrl,
+                trailerUrl: body.trailerUrl,
+                releaseDate: new Date(body.releaseDate),
+                director: body.director,
+                cast: {
+                    set: body.cast,
+                },
+                status: body.status,
+            },
+        });
+
+        return new Response(JSON.stringify(data), {
+            status: 201,
+            headers: { "Content-Type": "application/json" },
+        });
+    } catch (error: any) {
+        console.error("Failed to create movie:", error);
+        return new Response(JSON.stringify({ error: "Failed to create movie", details: error.message }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+        });
+    }
 }
+
 
 export async function DELETE(req: NextRequest) {
     const id = req.nextUrl.searchParams.get('id');
