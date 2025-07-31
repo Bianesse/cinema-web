@@ -54,7 +54,7 @@ const NotAuthorizedPage = () => {
               Access Denied
             </h1>
             <p className="text-amber-700 mb-4">
-              You don't have permission to access this page. This area is restricted to authorized personnel only.
+              You don&apos;t have permission to access this page. This area is restricted to authorized personnel only.
             </p>
             
             {/* Warning Notice */}
