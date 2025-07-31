@@ -10,14 +10,17 @@ import AddLocationModal from '@/components/modal/AddLocationModal';
 import EditLocationModal from '@/components/modal/EditLocationModal';
 import DeleteAlert from '../alert/DeleteAlert';
 import { toast } from 'sonner';
+import LocationSkeleton from '../skeleton/LocationAdminSkeleton';
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState<CinemaType[]>([]);
+  const [loading, setLoading] = useState(true);
   const fetchLocations = async () => {
     try {
       const response = await fetch('/api/admin/locations');
       const data = await response.json();
       setLocations(data);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching locations:', error);
     }
@@ -41,6 +44,8 @@ const LocationsPage = () => {
   useEffect(() => {
     fetchLocations()
   }, [])
+
+  if(loading) return <LocationSkeleton />;
 
   return (
     <div className="space-y-6">

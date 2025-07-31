@@ -6,7 +6,7 @@ import Nav from '@/components/layouts/nav';
 import MovieCard from '@/components/movie/MovieCard';
 import LocationCard from '@/components/movie/LocationCard';
 import MovieCardSkeleton from '@/components/skeleton/MovieCardSkeleton';
-import LocationCardSkeleton from '@/components/skeleton/LoationCardSkeleton';
+import LocationCardSkeleton from '@/components/skeleton/LocationCardSkeleton';
 import Footer from '@/components/layouts/footer';
 import { CinemaType, MovieType } from '@/types';
 
