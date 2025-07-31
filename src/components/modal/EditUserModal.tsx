@@ -15,34 +15,41 @@ import { Edit } from 'lucide-react'
 import { UserType } from '@/types'
 import { set } from 'zod'
 import { id } from 'zod/v4/locales'
+import { toast } from 'sonner'
 
-interface EditUserModalProps  {
+interface EditUserModalProps {
     user: UserType
     fetchUsers: () => void
 }
 
-const EditUserModal: React.FC<EditUserModalProps> = ({ user, fetchUsers}) => {
-    const [users, setUsers] = useState({id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, /* password: user.passwordHash */ })
-    const {id, name, email, phone, role, /* password */ } = users
+const EditUserModal: React.FC<EditUserModalProps> = ({ user, fetchUsers }) => {
+    const [users, setUsers] = useState({ id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, /* password: user.passwordHash */ })
+    const { id, name, email, phone, role, /* password */ } = users
+    const [open, setOpen] = useState(false)
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
             const res = await fetch('/api/admin/users', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({id, name, email, phone, role, /* password  */})
+                body: JSON.stringify({ id, name, email, phone, role, /* password  */ })
             })
             // Optionally: refresh users list or show success toast
 
             if (!res.ok) throw new Error('Failed to edit user')
+
+            toast.success("User edited successfully!")
             fetchUsers()
+            setOpen(false)
         } catch (err) {
             console.error('Failed to add user:', err)
+            toast.error("Failed to edit user.")
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
                     <Edit className="w-4 h-4" />

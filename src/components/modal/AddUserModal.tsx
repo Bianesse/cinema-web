@@ -11,11 +11,15 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
 
 const AddUserModal = ({ fetchUsers }: { fetchUsers: () => void }) => {
     const [user, setUser] = useState({ name: '', email: '', phone: '', role: 'USER', password: '' })
     const { name, email, phone, role, password } = user
+    const [open, setOpen] = useState(false)
+
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
@@ -26,18 +30,20 @@ const AddUserModal = ({ fetchUsers }: { fetchUsers: () => void }) => {
             })
 
             if (!res.ok) throw new Error('Failed to create user')
-            // Optionally: refresh users list or show success toast
+
+            toast.success("User created successfully!")
             fetchUsers()
+            setOpen(false) // ✅ close the dialog
         } catch (err) {
             console.error('Failed to add user:', err)
+            toast.error("Failed to create user.")
         } finally {
-            /* console.log('User added:', user) */
             setUser({ name: '', email: '', phone: '', role: '', password: '' })
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all">
                     <Plus className="w-4 h-4" />

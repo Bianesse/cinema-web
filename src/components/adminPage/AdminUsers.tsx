@@ -14,6 +14,7 @@ import {
     Edit,
     Trash2
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const UsersPage = () => {
     const [users, setUsers] = useState<UserType[]>([])
@@ -38,9 +39,11 @@ const UsersPage = () => {
                 body: JSON.stringify({ id })
             })
             if (!response.ok) throw new Error('Failed to delete user')
+            toast.success("User deleted successfully!")
             fetchUsers()
         } catch (err) {
             console.error('Failed to delete user:', err)
+            toast.error("Failed to delete user.")
         }
     }
 
