@@ -1,77 +1,106 @@
 'use client'
-import React from 'react';
-import { 
+
+import { useEffect, useState } from 'react'
+import { MovieFormPayload, MovieType } from '@/types'
+import MovieTableSkeleton from '../skeleton/MovieTableSkeleton'
+import {
   Plus,
   Search,
   Filter,
   Eye,
   Edit,
   Trash2
-} from 'lucide-react';
+} from 'lucide-react'
+import AddMovieModal from '@/components/modal/AddMovieModal'
+import DeleteAlert from '../alert/DeleteAlert'
+import EditMovieModal from '../modal/EditMovieModal'
+import { toast } from 'sonner'
 
 const MoviesPage = () => {
-  const movies = [
-    { 
-      id: 1, 
-      title: 'Epic Adventure', 
-      genre: ['Action', 'Adventure'], 
-      duration: 142, 
-      rating: 'PG-13',
-      status: 'Now Showing',
-      bookings: 245,
-      revenue: '$6,125'
-    },
-    { 
-      id: 2, 
-      title: 'Romantic Nights', 
-      genre: ['Romance', 'Drama'], 
-      duration: 118, 
-      rating: 'PG',
-      status: 'Now Showing',
-      bookings: 189,
-      revenue: '$5,670'
-    },
-    { 
-      id: 3, 
-      title: 'Space Odyssey', 
-      genre: ['Sci-Fi', 'Thriller'], 
-      duration: 156, 
-      rating: 'PG-13',
-      status: 'Coming Soon',
-      bookings: 0,
-      revenue: '$0'
-    },
-    { 
-      id: 4, 
-      title: 'Comedy Gold', 
-      genre: ['Comedy'], 
-      duration: 95, 
-      rating: 'PG',
-      status: 'Now Showing',
-      bookings: 156,
-      revenue: '$3,900'
-    },
-    { 
-      id: 5, 
-      title: 'Horror Night', 
-      genre: ['Horror', 'Thriller'], 
-      duration: 108, 
-      rating: 'R',
-      status: 'Ended',
-      bookings: 89,
-      revenue: '$2,225'
-    },
-  ];
+  const [movies, setMovies] = useState<MovieType[]>([])
+  const [newMovies, setNewMovies] = useState<MovieType[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchMovies = async () => {
+    try {
+      const response = await fetch('/api/admin/movies')
+      const data = await response.json()
+      setMovies(data)
+    } catch (err) {
+      console.error('Failed to fetch movies:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAddSubmit = async (newMovie: MovieFormPayload) => {
+    try {
+      const res = await fetch("/api/admin/movies", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMovie),
+      });
+
+      if (!res.ok) throw new Error('Failed to create movie')
+      // Optionally: refresh users list or show success toast
+      toast.success("Movie created successfully!")
+      fetchMovies()
+    } catch (err) {
+      console.error('Failed to add movie:', err)
+      toast.error("Failed to create movie.")
+    } finally {
+      /* console.log('Movie added:', newMovie) */
+    }
+    fetchMovies()
+  }
+
+  const handleEditSubmit = async (updatedMovie: MovieFormPayload) => {
+    try {
+      const res = await fetch("/api/admin/movies", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedMovie),
+      });
+
+      if (!res.ok) throw new Error('Failed to update movie')
+      toast.success("Movie updated successfully!")
+      fetchMovies()
+    } catch (err) {
+      console.error('Failed to update movie:', err)
+      toast.error("Failed to update movie.")
+    } finally {
+      /* console.log('Movie updated:', updatedMovie) */
+    }
+    fetchMovies()
+  }
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/admin/movies`, {
+        method: 'DELETE',
+        body: JSON.stringify({ id })
+      })
+      if (!response.ok) throw new Error('Failed to delete movie')
+      toast.success("Movie deleted successfully!")
+      fetchMovies()
+    } catch (err) {
+      toast.error("Failed to delete movie.")
+      console.error('Failed to delete movie:', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchMovies()
+  }, [])
+
+  if (loading) return <MovieTableSkeleton />
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold text-amber-900">Movies Management</h2>
-        <button className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all">
-          <Plus className="w-4 h-4" />
-          <span>Add Movie</span>
-        </button>
+        <AddMovieModal onSubmit={handleAddSubmit} />
       </div>
 
       {/* Search and Filter */}
@@ -125,11 +154,10 @@ const MoviesPage = () => {
                   </td>
                   <td className="px-6 py-4 text-amber-900">{movie.duration} min</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      movie.status === 'Now Showing' ? 'bg-green-100 text-green-800' :
+                    <span className={`px-2 py-1 rounded-full text-xs ${movie.status === 'Now Showing' ? 'bg-green-100 text-green-800' :
                       movie.status === 'Coming Soon' ? 'bg-blue-100 text-blue-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                        'bg-gray-100 text-gray-800'
+                      }`}>
                       {movie.status}
                     </span>
                   </td>
@@ -140,12 +168,8 @@ const MoviesPage = () => {
                       <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-red-600 hover:bg-red-100 rounded">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <EditMovieModal movieData={movie} onSubmit={handleEditSubmit} />
+                      <DeleteAlert handleDelete={() => { handleDelete(movie.id) }} />
                     </div>
                   </td>
                 </tr>
@@ -155,7 +179,7 @@ const MoviesPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MoviesPage;
+export default MoviesPage

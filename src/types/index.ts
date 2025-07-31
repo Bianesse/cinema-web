@@ -9,7 +9,13 @@ export interface MovieType {
     releaseDate: string;
     director: string;
     cast: string[];
+    status: string;
+    bookings?: number;
+    revenue?: number;
+    trailerUrl: string;
+    
 }
+export type MovieFormPayload = Omit<MovieType, "id">;
 
 export interface CinemaType {
     id: string;
@@ -17,4 +23,14 @@ export interface CinemaType {
     location: string;
     halls: number;
     facilities: string[];
+}
+
+export interface UserType{
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    password: string;
+    passwordHash: string;
 }
