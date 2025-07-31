@@ -7,6 +7,7 @@ import { useState } from "react";
 import { MovieFormPayload, MovieType } from "@/types";
 
 export default function AddMovieModal({ onSubmit }: { onSubmit: (movie: MovieFormPayload) => void }) {
+    const [open, setOpen] = useState(false);
     const [movie, setMovie] = useState({
         title: '',
         genre: '',
@@ -37,11 +38,12 @@ export default function AddMovieModal({ onSubmit }: { onSubmit: (movie: MovieFor
             cast: movie.cast.split(',').map(name => name.trim())
         };
         onSubmit(payload);
+        setOpen(false);
         setMovie({ title: '', genre: '', rating: '', duration: 0, synopsis: '', posterUrl: '', trailerUrl: '', releaseDate: '', director: '', cast: '', status: '' });
     };
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all">
                     <Plus className="w-4 h-4" />
@@ -96,7 +98,6 @@ export default function AddMovieModal({ onSubmit }: { onSubmit: (movie: MovieFor
                         <div className="space-y-2">
                             <Label htmlFor="status" className="text-amber-800">Status</Label>
                             <select name="status" id="status" value={movie.status} onChange={handleChange} className="w-full p-2 border border-amber-600 rounded">
-                                <option value="">Select status</option>
                                 <option value="COMING_SOON">COMING SOON</option>
                                 <option value="NOW_SHOWING">NOW SHOWING</option>
                             </select>

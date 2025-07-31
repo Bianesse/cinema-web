@@ -14,6 +14,7 @@ import {
 import AddMovieModal from '@/components/modal/AddMovieModal'
 import DeleteAlert from '../alert/DeleteAlert'
 import EditMovieModal from '../modal/EditMovieModal'
+import { toast } from 'sonner'
 
 const MoviesPage = () => {
   const [movies, setMovies] = useState<MovieType[]>([])
@@ -42,9 +43,11 @@ const MoviesPage = () => {
 
       if (!res.ok) throw new Error('Failed to create movie')
       // Optionally: refresh users list or show success toast
+      toast.success("Movie created successfully!")
       fetchMovies()
     } catch (err) {
       console.error('Failed to add movie:', err)
+      toast.error("Failed to create movie.")
     } finally {
       /* console.log('Movie added:', newMovie) */
     }
@@ -60,10 +63,11 @@ const MoviesPage = () => {
       });
 
       if (!res.ok) throw new Error('Failed to update movie')
-      // Optionally: refresh users list or show success toast
+      toast.success("Movie updated successfully!")
       fetchMovies()
     } catch (err) {
       console.error('Failed to update movie:', err)
+      toast.error("Failed to update movie.")
     } finally {
       /* console.log('Movie updated:', updatedMovie) */
     }
@@ -72,16 +76,18 @@ const MoviesPage = () => {
 
   const handleDelete = async (id: number) => {
     try {
-        const response = await fetch(`/api/admin/movies`, {
-            method: 'DELETE',
-            body: JSON.stringify({ id })
-        })
-        if (!response.ok) throw new Error('Failed to delete movie')
-        fetchMovies()
+      const response = await fetch(`/api/admin/movies`, {
+        method: 'DELETE',
+        body: JSON.stringify({ id })
+      })
+      if (!response.ok) throw new Error('Failed to delete movie')
+      toast.success("Movie deleted successfully!")
+      fetchMovies()
     } catch (err) {
-        console.error('Failed to delete movie:', err)
+      toast.error("Failed to delete movie.")
+      console.error('Failed to delete movie:', err)
     }
-}
+  }
 
   useEffect(() => {
     fetchMovies()

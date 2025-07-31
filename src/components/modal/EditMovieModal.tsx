@@ -15,7 +15,9 @@ import { Edit } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MovieFormPayload, MovieType } from "@/types";
 
+
 export default function EditMovieModal({ movieData, onSubmit, }: { movieData: MovieType; onSubmit: (movie: MovieFormPayload) => void; }) {
+    const [open, setOpen] = useState(false);
     const [movie, setMovie] = useState(movieData);
 
     useEffect(() => {
@@ -44,12 +46,12 @@ export default function EditMovieModal({ movieData, onSubmit, }: { movieData: Mo
                 ? movie.cast.map((name: string) => name.trim())
                 : (movie.cast as string).split(',').map((name: string) => name.trim()),
         };
-
         onSubmit(payload);
+        setOpen(false);
     };
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
                     <Edit className="w-4 h-4" />
@@ -104,7 +106,6 @@ export default function EditMovieModal({ movieData, onSubmit, }: { movieData: Mo
                         <div className="space-y-2">
                             <Label htmlFor="status">Status</Label>
                             <select name="status" id="status" className="w-full p-2 border border-amber-600 rounded" value={movie.status} onChange={handleChange}>
-                                <option value="">Select status</option>
                                 <option value="COMING_SOON">COMING SOON</option>
                                 <option value="NOW_SHOWING">NOW SHOWING</option>
                             </select>
