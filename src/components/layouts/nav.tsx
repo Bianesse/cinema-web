@@ -1,29 +1,23 @@
 'use client'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { signOut } from "next-auth/react";
 import { Play, Menu, X, User, ChevronDown, Settings, Calendar, Shield, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react"
+import { Button } from "../ui/button";
 
 export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const { data: session } = useSession();
-    const profileRef = useRef<HTMLDivElement>(null);
-
-    // Close profile dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-                setIsProfileOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
     const handleSignOut = () => {
         setIsProfileOpen(false);
@@ -60,75 +54,79 @@ export default function Nav() {
                     {/* Desktop Auth Section */}
                     <div className="hidden md:flex items-center space-x-4">
                         {session ? (
-                            <div className="relative" ref={profileRef}>
-                                <button
-                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-amber-800/50 transition-colors"
-                                >
-                                    <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
-                                        <span className="text-amber-900 font-semibold text-sm">
-                                            {getUserInitials(session?.user?.name || '')}
-                                        </span>
-                                    </div>
-                                    <span className="text-sm font-medium">{session.user?.name}</span>
-                                    <ChevronDown className={`w-4 h-4 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
-                                </button>
-
+                            <div className="relative">
                                 {/* Profile Dropdown */}
-                                {isProfileOpen && (
-                                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-amber-200 py-2 z-50">
-                                        <div className="px-4 py-2 border-b border-amber-100">
-                                            <p className="text-sm font-medium text-amber-900">{session.user?.name}</p>
-                                            <p className="text-xs text-amber-600">{session.user?.email}</p>
+                                <DropdownMenu onOpenChange={setIsProfileOpen}>
+                                    <DropdownMenuTrigger asChild>
+                                        <button
+                                            onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-amber-800/50 transition-colors"
+                                        >
+                                            <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
+                                                <span className="text-amber-900 font-semibold text-sm">
+                                                    {getUserInitials(session?.user?.name || '')}
+                                                </span>
+                                            </div>
+                                            <span className="text-sm font-medium">{session.user?.name}</span>
+                                            <ChevronDown className={`w-4 h-4 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+                                        </button>
+                                    </DropdownMenuTrigger>
+
+                                    <DropdownMenuContent align="end" className="w-56 mt-1 border-amber-200">
+                                        <DropdownMenuLabel className="text-amber-900">
+                                            <div className="text-sm font-medium">{session.user?.name}</div>
+                                            <div className="text-xs text-amber-600">{session.user?.email}</div>
                                             {session.user?.role && (
                                                 <span className="inline-block mt-1 px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
                                                     {session.user.role}
                                                 </span>
                                             )}
-                                        </div>
+                                        </DropdownMenuLabel>
 
-                                        <Link href="/profile">
-                                            <button className="w-full flex items-center space-x-2 px-4 py-2 text-amber-700 hover:bg-amber-50 transition-colors text-left">
-                                                <User className="w-4 h-4" />
-                                                <span>My Profile</span>
-                                            </button>
+                                        <DropdownMenuSeparator className="bg-amber-100" />
+
+                                        <Link href="/profile" passHref>
+                                            <DropdownMenuItem className="text-amber-700 focus:bg-amber-50">
+                                                <User className="w-4 h-4 mr-2" />
+                                                My Profile
+                                            </DropdownMenuItem>
                                         </Link>
 
-                                        <Link href="/bookings">
-                                            <button className="w-full flex items-center space-x-2 px-4 py-2 text-amber-700 hover:bg-amber-50 transition-colors text-left">
-                                                <Calendar className="w-4 h-4" />
-                                                <span>My Bookings</span>
-                                            </button>
+                                        <Link href="/bookings" passHref>
+                                            <DropdownMenuItem className="text-amber-700 focus:bg-amber-50">
+                                                <Calendar className="w-4 h-4 mr-2" />
+                                                My Bookings
+                                            </DropdownMenuItem>
                                         </Link>
 
-                                        <button className="w-full flex items-center space-x-2 px-4 py-2 text-amber-700 hover:bg-amber-50 transition-colors text-left">
-                                            <Settings className="w-4 h-4" />
-                                            <span>Settings</span>
-                                        </button>
+                                        <DropdownMenuItem className="text-amber-700 focus:bg-amber-50">
+                                            <Settings className="w-4 h-4 mr-2" />
+                                            Settings
+                                        </DropdownMenuItem>
 
-                                        {/* Admin Dashboard Link - Only show if user is ADMIN */}
-                                        {session.user?.role === 'ADMIN' && (
+                                        {session.user?.role === "ADMIN" && (
                                             <>
-                                                <div className="border-t border-amber-100 my-1"></div>
-                                                <Link href="/admin/dashboard">
-                                                    <button className="w-full flex items-center space-x-2 px-4 py-2 text-amber-700 hover:bg-amber-50 transition-colors text-left">
-                                                        <Shield className="w-4 h-4" />
-                                                        <span>Admin Dashboard</span>
-                                                    </button>
+                                                <DropdownMenuSeparator className="bg-amber-100" />
+                                                <Link href="/admin/dashboard" passHref>
+                                                    <DropdownMenuItem className="text-amber-700 focus:bg-amber-50">
+                                                        <Shield className="w-4 h-4 mr-2" />
+                                                        Admin Dashboard
+                                                    </DropdownMenuItem>
                                                 </Link>
                                             </>
                                         )}
 
-                                        <div className="border-t border-amber-100 my-1"></div>
-                                        <button
-                                            onClick={handleSignOut}
-                                            className="w-full flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors text-left"
+                                        <DropdownMenuSeparator className="bg-amber-100" />
+
+                                        <DropdownMenuItem
+                                            onClick={() => signOut()}
+                                            className="text-red-600 focus:bg-red-50"
                                         >
-                                            <LogOut className="w-4 h-4" />
-                                            <span>Sign Out</span>
-                                        </button>
-                                    </div>
-                                )}
+                                            <LogOut className="w-4 h-4 mr-2" />
+                                            Sign Out
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
                         ) : (
                             <>
