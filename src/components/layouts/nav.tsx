@@ -85,19 +85,19 @@ export default function Nav() {
 
                                         <DropdownMenuSeparator className="bg-amber-100" />
 
-                                        <Link href="/profile" passHref>
+                                        {/* <Link href="/profile" passHref> */}
                                             <DropdownMenuItem className="text-amber-700 focus:bg-amber-50">
                                                 <User className="w-4 h-4 mr-2" />
                                                 My Profile
                                             </DropdownMenuItem>
-                                        </Link>
+                                        {/* </Link> */}
 
-                                        <Link href="/bookings" passHref>
+                                        {/* <Link href="/bookings" passHref> */}
                                             <DropdownMenuItem className="text-amber-700 focus:bg-amber-50">
                                                 <Calendar className="w-4 h-4 mr-2" />
                                                 My Bookings
                                             </DropdownMenuItem>
-                                        </Link>
+                                        {/* </Link> */}
 
                                         <DropdownMenuItem className="text-amber-700 focus:bg-amber-50">
                                             <Settings className="w-4 h-4 mr-2" />
@@ -176,19 +176,19 @@ export default function Nav() {
                                         </div>
                                     </div>
 
-                                    <Link href="/profile">
+                                    {/* <Link href="/profile"> */}
                                         <button className="w-full flex items-center space-x-2 px-4 py-2 border border-amber-200 rounded-lg hover:bg-amber-200 hover:text-amber-900 transition-all text-left">
                                             <User className="w-4 h-4" />
                                             <span>My Profile</span>
                                         </button>
-                                    </Link>
+                                    {/* </Link> */}
 
-                                    <Link href="/bookings">
+                                    {/* <Link href="/bookings"> */}
                                         <button className="w-full flex items-center space-x-2 px-4 py-2 border border-amber-200 rounded-lg hover:bg-amber-200 hover:text-amber-900 transition-all text-left">
                                             <Calendar className="w-4 h-4" />
                                             <span>My Bookings</span>
                                         </button>
-                                    </Link>
+                                    {/* </Link> */}
 
                                     {/* Admin Dashboard Link for Mobile - Only show if user is ADMIN */}
                                     {session.user?.role === 'ADMIN' && (
