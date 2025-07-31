@@ -189,9 +189,11 @@ const CinemaLandingPage = () => {
             <button className="px-8 py-4 bg-white text-amber-800 rounded-lg text-lg font-semibold hover:bg-amber-50 transition-all transform hover:scale-105">
               Book Tickets
             </button>
+            <Link href="/movies" >
             <button className="px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-amber-800 rounded-lg text-lg font-semibold transition-all">
               Browse Movies
             </button>
+            </Link>
           </div>
         </div>
       </section>
