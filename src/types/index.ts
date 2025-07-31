@@ -18,11 +18,14 @@ export interface MovieType {
 export type MovieFormPayload = Omit<MovieType, "id">;
 
 export interface CinemaType {
-    id: string;
+    id: number;
     name: string;
     location: string;
     halls: number;
+    totalHalls: number;
     facilities: string[];
+    address: string;
+    totalSeats?: number;
 }
 
 export interface UserType{
@@ -34,3 +37,28 @@ export interface UserType{
     password: string;
     passwordHash: string;
 }
+
+export interface DashboardData {
+    totalRevenue: string;
+    totalBookings: number;
+    activeMovies: number;
+    totalUsers: number;
+    bookingsWithTime: BookingWithTime[];
+  }
+  
+  export interface BookingWithTime {
+    id: number;
+    totalAmount: string;
+    bookingDate: string; // ISO string, bisa juga Date jika kamu parsing
+    bookingStatus: string; // atau string biasa jika tidak strict
+    user: {
+      name: string;
+    };
+    showtime: {
+      movie: {
+        title: string;
+      };
+    };
+    timeAgo: string;
+  }
+  

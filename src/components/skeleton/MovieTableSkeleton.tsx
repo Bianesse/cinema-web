@@ -19,9 +19,9 @@ export default function MovieTableSkeleton() {
                     <table className="w-full">
                         <thead className="bg-amber-50">
                             <tr>
-                                {["Movie", "Genre", "Duration", "Status", "Bookings", "Revenue", "Actions"].map((title, i) => (
-                                    <th key={i} className="px-6 py-4 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                                        {title}
+                                {Array.from({ length: 5 }).map((_, index) => (
+                                    <th key={index} className="px-6 py-4 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
+                                        
                                     </th>
                                 ))}
                             </tr>

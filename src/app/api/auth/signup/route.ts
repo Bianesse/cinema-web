@@ -16,11 +16,26 @@ const RegisterSchema = z.object({
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const parsed = RegisterSchema.parse(body); // Will throw if invalid
+        const parsed = RegisterSchema.safeParse(body);
+
+        if (!parsed.success) {
+            // parsed.error is of type ZodError
+            const zodErrors = parsed.error.issues.map(issue => ({
+                field: issue.path.join("."),
+                message: issue.message,
+            }));
+
+            return new Response(JSON.stringify({ errors: zodErrors }), {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
+
+        const { name, email, phone, password } = parsed.data;
 
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
-            where: { email: parsed.email },
+            where: { email },
         });
 
         if (existingUser) {
@@ -30,38 +45,39 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Hash password
-        const hashedPassword = await bcrypt.hash(parsed.password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
         const user = await prisma.user.create({
             data: {
-                name: parsed.name,
-                email: parsed.email,
-                phone: parsed.phone,
+                name,
+                email,
+                phone,
                 passwordHash: hashedPassword,
-                role: "USER", // Optional: default role
+                role: "USER",
             },
         });
 
-        return new Response(JSON.stringify({
-            message: "User registered successfully",
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-            },
-        }), {
-            status: 201,
-            headers: { "Content-Type": "application/json" },
-        });
-
+        return new Response(
+            JSON.stringify({
+                message: "User registered successfully",
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                },
+            }),
+            {
+                status: 201,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     } catch (err) {
-
         console.error("Registration error:", err);
+
         return new Response(
             JSON.stringify({ error: "Something went wrong" }),
             { status: 500 }
         );
     }
 }
+

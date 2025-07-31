@@ -14,9 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MovieFormPayload, MovieType } from "@/types";
+import { toast } from "sonner";
 
 
-export default function EditMovieModal({ movieData, onSubmit, }: { movieData: MovieType; onSubmit: (movie: MovieFormPayload) => void; }) {
+export default function EditMovieModal({ movieData, fetchMovies, }: { movieData: MovieType; fetchMovies: () => void; }) {
     const [open, setOpen] = useState(false);
     const [movie, setMovie] = useState(movieData);
 
@@ -34,19 +35,35 @@ export default function EditMovieModal({ movieData, onSubmit, }: { movieData: Mo
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const payload = {
             ...movie,
             genre: Array.isArray(movie.genre)
                 ? movie.genre.map((genre: string) => genre.trim())
                 : (movie.genre as string).split(',').map((genre: string) => genre.trim()),
-    
+
             cast: Array.isArray(movie.cast)
                 ? movie.cast.map((name: string) => name.trim())
                 : (movie.cast as string).split(',').map((name: string) => name.trim()),
         };
-        onSubmit(payload);
+
+        try {
+            const res = await fetch("/api/admin/movies", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) throw new Error('Failed to update movie')
+            toast.success("Movie updated successfully!")
+            fetchMovies()
+        } catch (err) {
+            console.error('Failed to update movie:', err)
+            toast.error("Failed to update movie.")
+        } finally {
+            console.log('Movie updated:', payload)
+        }
         setOpen(false);
     };
 
