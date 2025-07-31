@@ -60,7 +60,7 @@ const DashboardPage = () => {
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-lg border border-amber-100">
           <h3 className="text-lg font-semibold text-amber-900 mb-4">Revenue Overview</h3>
           <div className="h-64 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl flex items-center justify-center">
-            <p className="text-amber-600">Chart would go here</p>
+            {/* <p className="text-amber-600">Chart would go here</p> */}
           </div>
         </div>
 

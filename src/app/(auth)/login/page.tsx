@@ -137,17 +137,17 @@ export default function LoginPage() {
                         </button>
 
                         {/* Social Login Divider */}
-                        <div className="relative">
+                        {/* <div className="relative">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-amber-200"></div>
                             </div>
                             <div className="relative flex justify-center text-sm">
                                 <span className="px-4 bg-white text-amber-600 font-medium">Or continue with</span>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Social Login Buttons */}
-                        <div className="grid grid-cols-2 gap-3">
+                        {/* <div className="grid grid-cols-2 gap-3">
                             <button
                                 type="button"
                                 className="w-full inline-flex justify-center py-3 px-4 border border-amber-200 rounded-xl shadow-sm bg-white/80 backdrop-blur-sm text-sm font-medium text-amber-700 hover:bg-amber-50 transition-all duration-200 hover:scale-[1.02]"
@@ -169,7 +169,7 @@ export default function LoginPage() {
                                 </svg>
                                 <span className="ml-2">Twitter</span>
                             </button>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Sign Up Link */}

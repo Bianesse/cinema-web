@@ -4,8 +4,10 @@ import {
     Menu,
     Bell,
     Settings,
+    ArrowLeft,
 } from 'lucide-react';
 import Sidebar from '@/components/layouts/sidebar';
+import Link from 'next/link';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -50,13 +52,20 @@ const AdminLayout = ({ children, activeTab, setActiveTab }: AdminLayoutProps) =>
                         </div>
 
                         <div className="flex items-center space-x-4">
-                            <button className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg relative">
+                            <Link
+                                href="/"
+                                className="flex items-center space-x-1 text-amber-700 hover:text-amber-900 transition-colors"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                <span className="text-sm font-medium">Back to main</span>
+                            </Link>
+                            {/* <button className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg relative">
                                 <Bell className="w-5 h-5" />
                                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
                             </button>
                             <button className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg">
                                 <Settings className="w-5 h-5" />
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </header>
