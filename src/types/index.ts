@@ -21,3 +21,13 @@ export interface CinemaType {
     halls: number;
     facilities: string[];
 }
+
+export interface UserType{
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    password: string;
+    passwordHash: string;
+}

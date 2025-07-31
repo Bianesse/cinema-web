@@ -1,5 +1,5 @@
 'use client'
-import { Film, LayoutDashboard, LogOut, MapPin, Play, X } from "lucide-react";
+import { Film, LayoutDashboard, LogOut, MapPin, Play, X, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react"
 
 interface SidebarProps {
@@ -13,6 +13,7 @@ const Sidebar = ( { sidebarOpen, setSidebarOpen, activeTab, setActiveTab }: Side
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
         { id: 'movies', label: 'Movies', icon: <Film className="w-5 h-5" /> },
         { id: 'locations', label: 'Locations', icon: <MapPin className="w-5 h-5" /> },
+        { id: 'users', label: 'Users', icon: <User className="w-5 h-5" /> },
       ];
 
       const {data: session} = useSession();
