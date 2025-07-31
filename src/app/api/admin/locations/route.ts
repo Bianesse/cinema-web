@@ -1,66 +1,34 @@
 import { PrismaClient } from "@prisma/client";
+import { handleClientScriptLoad } from "next/script";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
-    const movies = await prisma.movie.findMany();
-
-    const payments = await prisma.payment.findMany({
-        where: {
-            status: "PAID",
-        },
+    const cinemas = await prisma.cinema.findMany({
         include: {
-            booking: {
-                include: {
-                    showtime: {
-                        include: {
-                            movie: true,
-                        },
-                    },
-                },
+          halls: {
+            select: {
+              totalSeats: true,
             },
+          },
         },
-    });
+      });
+      
+      const cinemasWithTotalSeats = cinemas.map((cinema) => {
+        const totalSeats = cinema.halls.reduce((sum, hall) => sum + hall.totalSeats, 0);
+        return {
+          id: cinema.id,
+          name: cinema.name,
+          location: cinema.location,
+          address: cinema.address,
+          totalHalls: cinema.totalHalls,
+          facilities: cinema.facilities,
+          totalSeats,
+        };
+      });
 
-    const bookingSeats = await prisma.bookingSeat.findMany({
-        include: {
-            booking: {
-                include: {
-                    showtime: {
-                        include: {
-                            movie: true,
-                        },
-                    },
-                },
-            },
-        },
-    });
-
-    const revenueMap: Record<number, number> = {};
-    const bookedMap: Record<number, number> = {};
-
-    for (const payment of payments) {
-        const movie = payment.booking?.showtime?.movie;
-        if (!movie) continue;
-
-        revenueMap[movie.id] = (revenueMap[movie.id] || 0) + Number(payment.amount);
-    }
-
-    for (const seat of bookingSeats) {
-        const movie = seat.booking?.showtime?.movie;
-        if (!movie) continue;
-
-        bookedMap[movie.id] = (bookedMap[movie.id] || 0) + 1;
-    }
-
-    const movieWithStats = movies.map((movie) => ({
-        ...movie,
-        revenue: revenueMap[movie.id] ?? 0,
-        bookings: bookedMap[movie.id] ?? 0,
-    }));
-
-    return NextResponse.json(movieWithStats);
+    return NextResponse.json(cinemasWithTotalSeats);
 }
 
 export async function POST(req: NextRequest) {

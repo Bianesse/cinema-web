@@ -33,26 +33,10 @@ const MoviesPage = () => {
     }
   }
 
-  const handleAddSubmit = async (newMovie: MovieFormPayload) => {
-    try {
-      const res = await fetch("/api/admin/movies", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newMovie),
-      });
-
-      if (!res.ok) throw new Error('Failed to create movie')
-      // Optionally: refresh users list or show success toast
-      toast.success("Movie created successfully!")
-      fetchMovies()
-    } catch (err) {
-      console.error('Failed to add movie:', err)
-      toast.error("Failed to create movie.")
-    } finally {
-      /* console.log('Movie added:', newMovie) */
-    }
+  /* const handleAddSubmit = async (newMovie: MovieFormPayload) => {
+    
     fetchMovies()
-  }
+  } */
 
   const handleEditSubmit = async (updatedMovie: MovieFormPayload) => {
     try {
@@ -100,7 +84,7 @@ const MoviesPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold text-amber-900">Movies Management</h2>
-        <AddMovieModal onSubmit={handleAddSubmit} />
+        <AddMovieModal fetchMovies={fetchMovies} />
       </div>
 
       {/* Search and Filter */}

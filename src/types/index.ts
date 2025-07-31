@@ -22,7 +22,10 @@ export interface CinemaType {
     name: string;
     location: string;
     halls: number;
+    totalHalls: number;
     facilities: string[];
+    address: string;
+    totalSeats?: number;
 }
 
 export interface UserType{
