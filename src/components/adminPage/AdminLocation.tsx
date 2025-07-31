@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { CinemaType } from '@/types';
 import AddLocationModal from '@/components/modal/AddLocationModal';
+import EditLocationModal from '@/components/modal/EditLocationModal';
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState<CinemaType[]>([]);
@@ -39,9 +40,7 @@ const LocationsPage = () => {
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-lg font-semibold text-amber-900">{location.name}</h3>
               <div className="flex items-center space-x-1">
-                <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
-                  <Edit className="w-4 h-4" />
-                </button>
+                <EditLocationModal cinema={location} fetchCinemas={fetchLocations} />
                 <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
                   <MoreVertical className="w-4 h-4" />
                 </button>
