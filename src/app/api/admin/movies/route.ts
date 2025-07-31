@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
@@ -60,12 +60,7 @@ export async function GET(req: NextRequest) {
         bookings: bookedMap[movie.id] ?? 0,
     }));
 
-    return new Response(JSON.stringify(movieWithStats), {
-        status: 200,
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+    return NextResponse.json(movieWithStats);
 }
 
 export async function POST(req: NextRequest) {
@@ -106,35 +101,40 @@ export async function POST(req: NextRequest) {
 
 
 export async function DELETE(req: NextRequest) {
-    const id = req.nextUrl.searchParams.get('id');
+    const body = await req.json();
+    const id = body.id;
     const data = await prisma.movie.delete({
         where: {
-            id: parseInt(id as string),
+            id: id,
         },
     });
 
-    return new Response(JSON.stringify(data), {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    return NextResponse.json(data);
 }
 
 export async function PUT(req: NextRequest) {
     const body = await req.json();
-    const id = req.nextUrl.searchParams.get('id');
+    const id = body.id;
     const data = await prisma.movie.update({
         where: {
-            id: parseInt(id as string),
+            id: id,
         },
-        data: body,
+        data: {
+            title: body.title,
+            genre: body.genre,
+            rating: body.rating,
+            duration: Number(body.duration),
+            synopsis: body.synopsis,
+            posterUrl: body.posterUrl,
+            trailerUrl: body.trailerUrl,
+            releaseDate: new Date(body.releaseDate),
+            director: body.director,
+            cast: {
+                set: body.cast,
+            },
+            status: body.status,
+        },
     });
 
-    return new Response(JSON.stringify(data), {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    return NextResponse.json(data);
 }

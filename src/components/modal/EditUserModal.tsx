@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -22,7 +22,7 @@ interface EditUserModalProps  {
 }
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ user, fetchUsers}) => {
-    const [users, setUsers] = React.useState({id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, /* password: user.passwordHash */ })
+    const [users, setUsers] = useState({id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, /* password: user.passwordHash */ })
     const {id, name, email, phone, role, /* password */ } = users
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()

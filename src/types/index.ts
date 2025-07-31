@@ -10,9 +10,12 @@ export interface MovieType {
     director: string;
     cast: string[];
     status: string;
-    bookings: number;
-    revenue: number;
+    bookings?: number;
+    revenue?: number;
+    trailerUrl: string;
+    
 }
+export type MovieFormPayload = Omit<MovieType, "id">;
 
 export interface CinemaType {
     id: string;

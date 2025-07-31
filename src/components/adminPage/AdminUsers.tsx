@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { UserType } from '@/types'
 import MovieTableSkeleton from '../skeleton/MovieTableSkeleton'
 import AddUserModal from '@/components/modal/AddUserModal'
@@ -16,8 +16,8 @@ import {
 } from 'lucide-react'
 
 const UsersPage = () => {
-    const [users, setUsers] = React.useState<UserType[]>([])
-    const [loading, setLoading] = React.useState(true)
+    const [users, setUsers] = useState<UserType[]>([])
+    const [loading, setLoading] = useState(true)
 
     const fetchUsers = async () => {
         try {
@@ -44,7 +44,7 @@ const UsersPage = () => {
         }
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchUsers()
     }, [])
 

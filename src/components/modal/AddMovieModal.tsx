@@ -3,10 +3,11 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import React from "react";
+import { useState } from "react";
+import { MovieFormPayload, MovieType } from "@/types";
 
-export default function AddMovieModal({ onSubmit }: { onSubmit: (movie: any) => void }) {
-    const [movie, setMovie] = React.useState({
+export default function AddMovieModal({ onSubmit }: { onSubmit: (movie: MovieFormPayload) => void }) {
+    const [movie, setMovie] = useState({
         title: '',
         genre: '',
         rating: 'G',

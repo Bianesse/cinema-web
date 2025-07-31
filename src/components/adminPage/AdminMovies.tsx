@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
-import { MovieType } from '@/types'
+import { useEffect, useState } from 'react'
+import { MovieFormPayload, MovieType } from '@/types'
 import MovieTableSkeleton from '../skeleton/MovieTableSkeleton'
 import {
   Plus,
@@ -12,11 +12,13 @@ import {
   Trash2
 } from 'lucide-react'
 import AddMovieModal from '@/components/modal/AddMovieModal'
+import DeleteAlert from '../alert/DeleteAlert'
+import EditMovieModal from '../modal/EditMovieModal'
 
 const MoviesPage = () => {
-  const [movies, setMovies] = React.useState<MovieType[]>([])
-  const [newMovies, setNewMovies] = React.useState<MovieType[]>([])
-  const [loading, setLoading] = React.useState(true)
+  const [movies, setMovies] = useState<MovieType[]>([])
+  const [newMovies, setNewMovies] = useState<MovieType[]>([])
+  const [loading, setLoading] = useState(true)
 
   const fetchMovies = async () => {
     try {
@@ -30,7 +32,7 @@ const MoviesPage = () => {
     }
   }
 
-  const handleAddSubmit = async (newMovie: MovieType) => {
+  const handleAddSubmit = async (newMovie: MovieFormPayload) => {
     try {
       const res = await fetch("/api/admin/movies", {
         method: "POST",
@@ -44,12 +46,44 @@ const MoviesPage = () => {
     } catch (err) {
       console.error('Failed to add movie:', err)
     } finally {
-      console.log('Movie added:', newMovie)
+      /* console.log('Movie added:', newMovie) */
     }
     fetchMovies()
   }
 
-  React.useEffect(() => {
+  const handleEditSubmit = async (updatedMovie: MovieFormPayload) => {
+    try {
+      const res = await fetch("/api/admin/movies", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedMovie),
+      });
+
+      if (!res.ok) throw new Error('Failed to update movie')
+      // Optionally: refresh users list or show success toast
+      fetchMovies()
+    } catch (err) {
+      console.error('Failed to update movie:', err)
+    } finally {
+      /* console.log('Movie updated:', updatedMovie) */
+    }
+    fetchMovies()
+  }
+
+  const handleDelete = async (id: number) => {
+    try {
+        const response = await fetch(`/api/admin/movies`, {
+            method: 'DELETE',
+            body: JSON.stringify({ id })
+        })
+        if (!response.ok) throw new Error('Failed to delete movie')
+        fetchMovies()
+    } catch (err) {
+        console.error('Failed to delete movie:', err)
+    }
+}
+
+  useEffect(() => {
     fetchMovies()
   }, [])
 
@@ -115,8 +149,8 @@ const MoviesPage = () => {
                   <td className="px-6 py-4 text-amber-900">{movie.duration} min</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 rounded-full text-xs ${movie.status === 'Now Showing' ? 'bg-green-100 text-green-800' :
-                        movie.status === 'Coming Soon' ? 'bg-blue-100 text-blue-800' :
-                          'bg-gray-100 text-gray-800'
+                      movie.status === 'Coming Soon' ? 'bg-blue-100 text-blue-800' :
+                        'bg-gray-100 text-gray-800'
                       }`}>
                       {movie.status}
                     </span>
@@ -128,12 +162,8 @@ const MoviesPage = () => {
                       <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-red-600 hover:bg-red-100 rounded">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <EditMovieModal movieData={movie} onSubmit={handleEditSubmit} />
+                      <DeleteAlert handleDelete={() => { handleDelete(movie.id) }} />
                     </div>
                   </td>
                 </tr>

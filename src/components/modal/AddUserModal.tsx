@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import { useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
 const AddUserModal = ({ fetchUsers }: { fetchUsers: () => void }) => {
-    const [user, setUser] = React.useState({ name: '', email: '', phone: '', role: 'USER', password: '' })
+    const [user, setUser] = useState({ name: '', email: '', phone: '', role: 'USER', password: '' })
     const { name, email, phone, role, password } = user
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -31,7 +31,7 @@ const AddUserModal = ({ fetchUsers }: { fetchUsers: () => void }) => {
         } catch (err) {
             console.error('Failed to add user:', err)
         } finally {
-            console.log('User added:', user)
+            /* console.log('User added:', user) */
             setUser({ name: '', email: '', phone: '', role: '', password: '' })
         }
     }
