@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
     const body = await req.json();
     const id = body.id;
-    const data = await prisma.movie.delete({
+    const data = await prisma.cinema.delete({
         where: {
             id: id,
         },

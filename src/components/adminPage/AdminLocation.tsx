@@ -8,6 +8,8 @@ import {
 import { CinemaType } from '@/types';
 import AddLocationModal from '@/components/modal/AddLocationModal';
 import EditLocationModal from '@/components/modal/EditLocationModal';
+import DeleteAlert from '../alert/DeleteAlert';
+import { toast } from 'sonner';
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState<CinemaType[]>([]);
@@ -18,6 +20,21 @@ const LocationsPage = () => {
       setLocations(data);
     } catch (error) {
       console.error('Error fetching locations:', error);
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/admin/locations`, {
+        method: 'DELETE',
+        body: JSON.stringify({ id })
+      })
+      if (!response.ok) throw new Error('Failed to delete location')
+      toast.success("Location deleted successfully!")
+      fetchLocations()
+    } catch (err) {
+      toast.error("Failed to delete location.")
+      console.error('Failed to delete location:', err)
     }
   }
 
@@ -41,9 +58,7 @@ const LocationsPage = () => {
               <h3 className="text-lg font-semibold text-amber-900">{location.name}</h3>
               <div className="flex items-center space-x-1">
                 <EditLocationModal cinema={location} fetchCinemas={fetchLocations} />
-                <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
-                  <MoreVertical className="w-4 h-4" />
-                </button>
+                <DeleteAlert handleDelete={() => handleDelete(location.id)} />
               </div>
             </div>
 

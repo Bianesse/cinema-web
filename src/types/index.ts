@@ -18,7 +18,7 @@ export interface MovieType {
 export type MovieFormPayload = Omit<MovieType, "id">;
 
 export interface CinemaType {
-    id: string;
+    id: number;
     name: string;
     location: string;
     halls: number;
