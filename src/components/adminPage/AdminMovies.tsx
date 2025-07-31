@@ -33,31 +33,6 @@ const MoviesPage = () => {
     }
   }
 
-  /* const handleAddSubmit = async (newMovie: MovieFormPayload) => {
-    
-    fetchMovies()
-  } */
-
-  const handleEditSubmit = async (updatedMovie: MovieFormPayload) => {
-    try {
-      const res = await fetch("/api/admin/movies", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedMovie),
-      });
-
-      if (!res.ok) throw new Error('Failed to update movie')
-      toast.success("Movie updated successfully!")
-      fetchMovies()
-    } catch (err) {
-      console.error('Failed to update movie:', err)
-      toast.error("Failed to update movie.")
-    } finally {
-      /* console.log('Movie updated:', updatedMovie) */
-    }
-    fetchMovies()
-  }
-
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(`/api/admin/movies`, {
@@ -152,7 +127,7 @@ const MoviesPage = () => {
                       <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
                         <Eye className="w-4 h-4" />
                       </button>
-                      <EditMovieModal movieData={movie} onSubmit={handleEditSubmit} />
+                      <EditMovieModal movieData={movie} fetchMovies={fetchMovies} />
                       <DeleteAlert handleDelete={() => { handleDelete(movie.id) }} />
                     </div>
                   </td>
