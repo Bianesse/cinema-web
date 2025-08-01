@@ -3,6 +3,8 @@ import { CinemaType, MovieType } from "@/types";
 import { use, useEffect, useState } from "react";
 import MovieDetailSkeleton from "@/components/skeleton/MovieDetailSkeleton";
 import { ChevronDown, CirclePlay, User } from "lucide-react";
+import { toast } from "sonner";
+import PlayTrailerModal from "@/components/modal/PlayTrailerModal";
 
 export default function Movie({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -72,11 +74,7 @@ export default function Movie({ params }: { params: Promise<{ id: string }> }) {
                             <span className="font-semibold">Release Date:</span> {formattedDate}
                         </p>
                     </div>
-
-                    <button className="flex items-center gap-2 text-amber-700 font-semibold hover:underline w-fit">
-                        <CirclePlay className="text-xl" />
-                        Play Trailer
-                    </button>
+                    <PlayTrailerModal trailerUrl={movie.trailerUrl} />
                 </div>
 
             </div>
@@ -107,7 +105,8 @@ export default function Movie({ params }: { params: Promise<{ id: string }> }) {
                     <div className="mt-4">
                         <div className="flex flex-col gap-4">
                             {cinema.map((cinema: CinemaType, index: number) => (
-                                <div key={index} className="p-5 w-full rounded-lg bg-white shadow-lg">
+                                <div key={index} className="p-5 w-full rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all cursor-pointer"
+                                onClick={() => toast.warning("Fitur ini masih dalam pengembangan")}>
                                     <div className="flex items-start justify-between">
                                         <div>
                                             <p className="text-xl font-bold text-amber-900">{cinema.name}</p>
