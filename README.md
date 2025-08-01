@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cinemax - Aplikasi Pemesanan Tiket Bioskop Online
 
-## Getting Started
+Cinemax adalah platform web untuk melihat informasi film dan memesan tiket bioskop secara online. Aplikasi ini dirancang untuk memberikan pengalaman yang mudah dan efisien bagi pengguna, sekaligus menyediakan sistem manajemen yang lengkap untuk admin.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Fitur Utama
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Tampilan Pengguna (Landing Page)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Pengguna dapat menjelajahi berbagai informasi tanpa harus login, termasuk:
+* Melihat daftar film yang sedang tayang (**Now Playing**).
+* Mencari dan melihat detail lengkap semua film (sinopsis, rating, jadwal, dll.).
+* Melihat daftar lokasi bioskop yang tersedia.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Autentikasi Pengguna
 
-## Learn More
+* **Login & Register**: Pengguna dapat membuat akun atau masuk untuk mendapatkan akses ke fitur personal, seperti riwayat pemesanan.
+* **Navigasi**: Tombol Login dan Register tersedia di **navbar** untuk memudahkan akses.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Akses dan Fitur Admin
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Sistem ini memiliki area khusus untuk admin guna mengelola seluruh data aplikasi.
 
-## Deploy on Vercel
+### Alur Masuk Admin
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **Redirect Otomatis**: Setelah admin berhasil login, sistem akan secara otomatis mengarahkan ke **Dashboard Admin**.
+* **Akses Manual**: Admin juga bisa masuk ke dashboard melalui **ikon profil** yang muncul di navbar setelah login. Cukup klik ikon tersebut dan pilih **Admin Dashboard**.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Dashboard Admin
+
+Dashboard ini berfungsi sebagai pusat kontrol dengan fitur sebagai berikut:
+
+* **Statistik**: Melihat data penting seperti jumlah film, pengguna, dan transaksi.
+* **Manajemen Data (CRUD)**: Admin dapat melakukan **`Create`**, **`Read`**, **`Update`**, dan **`Delete`** untuk data:
+    * **Movies**: Mengelola daftar film yang tersedia.
+    * **Locations**: Mengelola informasi lokasi bioskop.
+    * **Users**: Mengelola daftar pengguna terdaftar.
+
+---
+
+## Cara Menjalankan Proyek
+
+*(Bagian ini bisa Anda sesuaikan dengan teknologi dan instruksi spesifik dari proyek Anda.)*
+
+1.  **Clone repositori ini:**
+    ```bash
+    git clone https://github.com/Bianesse/cinema-web
+    ```
+2.  **Masuk ke direktori proyek:**
+    ```bash
+    cd cinema-web
+    ```
+3.  **Instal dependensi:**
+    ```bash
+    pnpm install
+    # or
+    npm install
+    ```
+4.  **Setup DB:**
+    ```bash
+    Setup dan buat database dari neon dan masukkan key dan balue pada .env | .env.local
+    ```
+4.  **Generate Prisma:**
+    ```bash
+    pnpx prisma generate
+    # or
+    npx prisma generate
+    ```
+5.  **Migrate Prisma:**
+    ```bash
+    pnpx prisma migrate dev
+    # or
+    pnpx prisma migrate dev
+    ```  
+5.  **Seed Prisma:**
+    ```bash
+    tambah "db:seed": "tsx prisma/seed.ts" dalam scripts di file package.json
+    # then
+    pnpm db:seed
+    ```    
+5.  **Generate Secret:**
+    ```bash
+    pnpx auth secret
+    # or
+    npx auth secret
+    ```
+6.  **Jalankan aplikasi:**
+    ```bash
+    pnpm dev
+    # or
+    npm dev
+    ```
+
+    Buka [http://localhost:3000](http://localhost:3000) di browser
+---
+
+
+## Tim Pengembang
+
+* [Kasabian Ibrahim] - [Developer]
