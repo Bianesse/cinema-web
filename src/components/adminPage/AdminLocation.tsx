@@ -11,10 +11,14 @@ import EditLocationModal from '@/components/modal/EditLocationModal';
 import DeleteAlert from '../alert/DeleteAlert';
 import { toast } from 'sonner';
 import LocationSkeleton from '../skeleton/LocationAdminSkeleton';
+import { LoadingDialog } from '../alert/LoadingDialog';
+import { fi } from 'zod/v4/locales';
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState<CinemaType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [processLoading, setProcessLoading] = useState(false);
+
   const fetchLocations = async () => {
     try {
       const response = await fetch('/api/admin/locations');
@@ -28,6 +32,7 @@ const LocationsPage = () => {
 
   const handleDelete = async (id: number) => {
     try {
+      setProcessLoading(true)
       const response = await fetch(`/api/admin/locations`, {
         method: 'DELETE',
         body: JSON.stringify({ id })
@@ -38,6 +43,8 @@ const LocationsPage = () => {
     } catch (err) {
       toast.error("Failed to delete location.")
       console.error('Failed to delete location:', err)
+    }finally{
+      setProcessLoading(false)
     }
   }
 
@@ -48,6 +55,8 @@ const LocationsPage = () => {
   if(loading) return <LocationSkeleton />;
 
   return (
+    <>
+    <LoadingDialog open={processLoading} />
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -117,6 +126,7 @@ const LocationsPage = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 

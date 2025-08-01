@@ -15,10 +15,12 @@ import {
     Trash2
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { LoadingDialog } from '../alert/LoadingDialog'
 
 const UsersPage = () => {
     const [users, setUsers] = useState<UserType[]>([])
     const [loading, setLoading] = useState(true)
+    const [processLoading, setProcessLoading] = useState(false)
 
     const fetchUsers = async () => {
         try {
@@ -34,6 +36,7 @@ const UsersPage = () => {
 
     const handleDelete = async (id: number) => {
         try {
+            setProcessLoading(true)
             const response = await fetch(`/api/admin/users`, {
                 method: 'DELETE',
                 body: JSON.stringify({ id })
@@ -44,6 +47,8 @@ const UsersPage = () => {
         } catch (err) {
             console.error('Failed to delete user:', err)
             toast.error("Failed to delete user.")
+        }finally{
+            setProcessLoading(false)
         }
     }
 
@@ -54,6 +59,8 @@ const UsersPage = () => {
     if (loading) return <MovieTableSkeleton />
 
     return (
+        <>
+        <LoadingDialog open={processLoading} />
         <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -115,6 +122,7 @@ const UsersPage = () => {
                 </div>
             </div>
         </div>
+        </>
     )
 }
 

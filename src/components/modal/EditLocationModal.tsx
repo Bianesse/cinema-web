@@ -15,10 +15,13 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { Edit, Pencil } from "lucide-react"
 import { CinemaType } from "@/types"
+import { LoadingDialog } from "../alert/LoadingDialog"
+import { fi } from "zod/v4/locales"
 
 
 export default function EditCinemaDialog({ cinema, fetchCinemas }: { cinema: CinemaType; fetchCinemas: () => void }) {
     const [open, setOpen] = useState(false)
+    const [processLoading, setProcessLoading] = useState(false)
 
     const [form, setForm] = useState({
         id: cinema.id,
@@ -46,6 +49,7 @@ export default function EditCinemaDialog({ cinema, fetchCinemas }: { cinema: Cin
         }
 
         try {
+            setProcessLoading(true)
             const res = await fetch(`/api/admin/locations`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -60,10 +64,14 @@ export default function EditCinemaDialog({ cinema, fetchCinemas }: { cinema: Cin
         } catch (err) {
             console.error("Error:", err)
             toast.error("Failed to update cinema")
+        }finally {
+            setProcessLoading(false)
         }
     }
 
     return (
+        <>
+        <LoadingDialog open={processLoading} />
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
@@ -102,5 +110,6 @@ export default function EditCinemaDialog({ cinema, fetchCinemas }: { cinema: Cin
                 </form>
             </DialogContent>
         </Dialog>
+        </>
     )
 }

@@ -15,11 +15,14 @@ import AddMovieModal from '@/components/modal/AddMovieModal'
 import DeleteAlert from '../alert/DeleteAlert'
 import EditMovieModal from '../modal/EditMovieModal'
 import { toast } from 'sonner'
+import { LoadingDialog } from '../alert/LoadingDialog'
+import { set } from 'zod'
 
 const MoviesPage = () => {
   const [movies, setMovies] = useState<MovieType[]>([])
   const [newMovies, setNewMovies] = useState<MovieType[]>([])
   const [loading, setLoading] = useState(true)
+  const [processLoading, setProcessLoading] = useState(false)
 
   const fetchMovies = async () => {
     try {
@@ -35,6 +38,7 @@ const MoviesPage = () => {
 
   const handleDelete = async (id: number) => {
     try {
+      setProcessLoading(true)
       const response = await fetch(`/api/admin/movies`, {
         method: 'DELETE',
         body: JSON.stringify({ id })
@@ -42,9 +46,14 @@ const MoviesPage = () => {
       if (!response.ok) throw new Error('Failed to delete movie')
       toast.success("Movie deleted successfully!")
       fetchMovies()
+
     } catch (err) {
+
       toast.error("Failed to delete movie.")
       console.error('Failed to delete movie:', err)
+
+    }finally{
+      setProcessLoading(false)
     }
   }
 
@@ -55,6 +64,8 @@ const MoviesPage = () => {
   if (loading) return <MovieTableSkeleton />
 
   return (
+    <>
+    <LoadingDialog open={processLoading} />
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -138,6 +149,7 @@ const MoviesPage = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
