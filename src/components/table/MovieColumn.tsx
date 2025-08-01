@@ -72,6 +72,7 @@ export function getMovieColumns({
           </span>
         );
       },
+      
     },
     {
       header: "Bookings",
@@ -103,5 +104,6 @@ export function getMovieColumns({
         );
       },
     },
+    
   ];
 }
