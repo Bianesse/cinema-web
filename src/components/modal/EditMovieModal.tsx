@@ -125,6 +125,7 @@ export default function EditMovieModal({ movieData, fetchMovies, }: { movieData:
                             <select name="status" id="status" className="w-full p-2 border border-amber-600 rounded" value={movie.status} onChange={handleChange}>
                                 <option value="COMING_SOON">COMING SOON</option>
                                 <option value="NOW_SHOWING">NOW SHOWING</option>
+                                <option value="ENDED">ENDED</option>
                             </select>
                         </div>
                         <div className="space-y-2">
