@@ -118,6 +118,7 @@ export default function AddMovieModal({ fetchMovies }: { fetchMovies: () => void
                             <select name="status" id="status" value={movie.status} onChange={handleChange} className="w-full p-2 border border-amber-600 rounded" required>
                                 <option value="COMING_SOON">COMING SOON</option>
                                 <option value="NOW_SHOWING">NOW SHOWING</option>
+                                <option value="ENDED">ENDED</option>
                             </select>
                         </div>
                         <div className="space-y-2">
