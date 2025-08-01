@@ -27,7 +27,7 @@ import { ChevronLeft, ChevronRight, Filter, Search } from 'lucide-react'
 import React, { useState } from 'react'
 
 type TableProps<T> = {
-  columns: ColumnDef<T, any>[]
+  columns: ColumnDef<T, unknown>[]
   data: T[]
 }
 
