@@ -1,6 +1,6 @@
 'use client'
 import { Play, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -33,8 +33,13 @@ export default function LoginPage() {
             console.error(response.error);
             setLoading(false);
             return;
+        }
+        const session = await getSession();
+
+        if (session?.user?.role === "ADMIN") {
+            router.push("/admin/dashboard");
         } else {
-            router.push('/');
+            router.push("/");
         }
     };
 
