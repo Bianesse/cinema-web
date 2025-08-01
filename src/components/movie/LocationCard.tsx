@@ -1,4 +1,5 @@
 import { MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 interface Cinema {
   name: string;
@@ -28,7 +29,8 @@ export default function LocationCard({ index, cinema }: LocationCardProps) {
           </span>
         ))}
       </div>
-      <button className="w-full py-2 border border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white rounded-lg transition-all">
+      <button className="w-full py-2 border border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white rounded-lg transition-all"
+      onClick={() => toast.warning("Fitur ini masih dalam pengembangan")}>
         View Showtimes
       </button>
     </div>
