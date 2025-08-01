@@ -15,11 +15,13 @@ import { Edit } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MovieFormPayload, MovieType } from "@/types";
 import { toast } from "sonner";
+import { LoadingDialog } from "../alert/LoadingDialog";
 
 
 export default function EditMovieModal({ movieData, fetchMovies, }: { movieData: MovieType; fetchMovies: () => void; }) {
     const [open, setOpen] = useState(false);
     const [movie, setMovie] = useState(movieData);
+    const [processLoading, setProcessLoading] = useState(false);
 
     useEffect(() => {
         setMovie(movieData);
@@ -49,6 +51,7 @@ export default function EditMovieModal({ movieData, fetchMovies, }: { movieData:
         };
 
         try {
+            setProcessLoading(true)
             const res = await fetch("/api/admin/movies", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -63,11 +66,14 @@ export default function EditMovieModal({ movieData, fetchMovies, }: { movieData:
             toast.error("Failed to update movie.")
         } finally {
             console.log('Movie updated:', payload)
+            setProcessLoading(false)
         }
         setOpen(false);
     };
 
     return (
+        <>
+        <LoadingDialog open={processLoading} />
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
@@ -146,5 +152,6 @@ export default function EditMovieModal({ movieData, fetchMovies, }: { movieData:
                 </form>
             </DialogContent>
         </Dialog>
+        </>
     );
 }

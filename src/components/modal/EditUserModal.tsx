@@ -16,6 +16,7 @@ import { UserType } from '@/types'
 import { set } from 'zod'
 import { id } from 'zod/v4/locales'
 import { toast } from 'sonner'
+import { LoadingDialog } from '../alert/LoadingDialog'
 
 interface EditUserModalProps {
     user: UserType
@@ -26,10 +27,12 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, fetchUsers }) => {
     const [users, setUsers] = useState({ id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, /* password: user.passwordHash */ })
     const { id, name, email, phone, role, /* password */ } = users
     const [open, setOpen] = useState(false)
+    const [processLoading, setProcessLoading] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
+            setProcessLoading(true)
             const res = await fetch('/api/admin/users', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -45,10 +48,14 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, fetchUsers }) => {
         } catch (err) {
             console.error('Failed to add user:', err)
             toast.error("Failed to edit user.")
+        }finally {
+            setProcessLoading(false)
         }
     }
 
     return (
+        <>
+        <LoadingDialog open={processLoading} />
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
@@ -92,6 +99,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ user, fetchUsers }) => {
                 </form>
             </DialogContent>
         </Dialog>
+        </>
 
     )
 }

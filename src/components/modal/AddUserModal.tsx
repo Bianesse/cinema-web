@@ -13,16 +13,19 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
+import { LoadingDialog } from '../alert/LoadingDialog'
 
 const AddUserModal = ({ fetchUsers }: { fetchUsers: () => void }) => {
     const [user, setUser] = useState({ name: '', email: '', phone: '', role: 'USER', password: '' })
     const { name, email, phone, role, password } = user
     const [open, setOpen] = useState(false)
+    const [processLoading, setProcessLoading] = useState(false)
 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
+            setProcessLoading(true)
             const res = await fetch('/api/admin/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -39,10 +42,13 @@ const AddUserModal = ({ fetchUsers }: { fetchUsers: () => void }) => {
             toast.error("Failed to create user.")
         } finally {
             setUser({ name: '', email: '', phone: '', role: '', password: '' })
+            setProcessLoading(false)
         }
     }
 
     return (
+        <>
+        <LoadingDialog open={processLoading} />
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all">
@@ -87,6 +93,7 @@ const AddUserModal = ({ fetchUsers }: { fetchUsers: () => void }) => {
                 </form>
             </DialogContent>
         </Dialog>
+        </>
     )
 }
 
