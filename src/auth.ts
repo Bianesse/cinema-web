@@ -59,13 +59,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-    async jwt({ token, user }) {
-      // First time login, user exists
-      if (user) {
+    async jwt({ token, user, account }) {
+      // On first login
+      if (user && account?.provider === "google") {
+        // Check if user already exists
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email || "" },
+        });
+
+        // If not, create them
+        if (!existingUser) {
+          const newUser = await prisma.user.create({
+            data: {
+              name: user.name || "Unnamed",
+              email: user.email || "",
+              role: "USER", // or "ADMIN" based on logic
+              passwordHash: "", // Since no password for OAuth
+            },
+          });
+          token.role = newUser.role;
+        } else {
+          token.role = existingUser.role;
+        }
+      }
+
+      // For credentials login, role already set
+      if (user && account?.provider === "credentials") {
         token.role = user.role;
       }
+
       return token;
-    },
+    }
+
   },
   session: {
     strategy: "jwt",
