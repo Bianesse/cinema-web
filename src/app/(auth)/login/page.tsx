@@ -1,7 +1,63 @@
+'use client'
 import { Play, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-
+import { getSession, signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
+    const router = useRouter();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const errorMessages: Record<string, string> = {
+        CredentialsSignin: "Something went wrong on our end. Please try again later.",
+        Configuration: "Invalid email or password. Please try again.",
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const response = await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false,
+        });
+
+        if (response?.error) {
+            const errorMessage = errorMessages[response.error] || "An unexpected error occurred.";
+
+            toast.error(errorMessage);
+            /* console.error(response.error); */ // Log the raw error for debugging
+            setLoading(false);
+            return;
+        }
+        const session = await getSession();
+
+        if (session?.user?.role === "ADMIN") {
+            router.push("/admin/dashboard");
+        } else {
+            router.push("/");
+        }
+    };
+
+    const handleSocialLogin = async (provider: string) => {
+        setLoading(true);
+        const response = await signIn(provider, {
+            redirectTo: '/',
+        })
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
             <div className="w-full max-w-lg relative z-10">
@@ -35,8 +91,8 @@ export default function LoginPage() {
                                     type="email"
                                     id="email"
                                     name="email"
-                                    /* value={formData.email}
-                                    onChange={handleInputChange} */
+                                    value={formData.email}
+                                    onChange={handleInputChange}
                                     className="w-full p-4 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-amber-900 placeholder-amber-400 transition-all duration-200"
                                     placeholder="Enter your email"
                                 />
@@ -53,55 +109,55 @@ export default function LoginPage() {
                                     <Lock className="h-5 w-5 text-amber-500" />
                                 </div>
                                 <input
-                                    /* type={showPassword ? "text" : "password"} */
+                                    type={showPassword ? "text" : "password"}
                                     id="password"
                                     name="password"
-                                    /* value={formData.password}
-                                    onChange={handleInputChange} */
+                                    value={formData.password}
+                                    onChange={handleInputChange}
                                     className="w-full p-4 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white/80 backdrop-blur-sm text-amber-900 placeholder-amber-400 transition-all duration-200"
                                     placeholder="Enter your password"
                                 />
                                 <button
                                     type="button"
                                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                                    /* onClick={() => setShowPassword(!showPassword)} */
+                                    onClick={() => setShowPassword(!showPassword)}
                                 >
-                                    {/* {showPassword ? (
+                                    {showPassword ? (
                                         <EyeOff className="h-5 w-5 text-amber-500 hover:text-amber-600 transition-colors" />
                                     ) : (
                                         <Eye className="h-5 w-5 text-amber-500 hover:text-amber-600 transition-colors" />
-                                    )} */}
+                                    )}
                                 </button>
                             </div>
                         </div>
 
                         {/* Remember Me and Forgot Password */}
-                        {/* <div className="flex items-center justify-end">
+                        <div className="flex items-center justify-end">
                             <div className="text-sm">
                                 <button className="font-medium text-amber-600 hover:text-amber-500 transition-colors">
                                     Forgot password?
                                 </button>
                             </div>
-                        </div> */}
+                        </div>
 
                         {/* Login Button */}
                         <button
-                            /* onClick={handleSubmit}
-                            disabled={isLoading} */
+                            onClick={handleSubmit}
+                            disabled={loading}
                             className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] transition-all duration-200"
                         >
-                            {/* {isLoading ? (
+                            {loading ? (
                                 <div className="flex items-center space-x-2">
                                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                     <span>Signing in...</span>
                                 </div>
                             ) : (
                                 'Sign In'
-                            )} */}
+                            )}
                         </button>
 
                         {/* Social Login Divider */}
-                        <div className="relative">
+                       <div className="relative">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-amber-200"></div>
                             </div>
@@ -114,7 +170,8 @@ export default function LoginPage() {
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 type="button"
-                                className="w-full inline-flex justify-center py-3 px-4 border border-amber-200 rounded-xl shadow-sm bg-white/80 backdrop-blur-sm text-sm font-medium text-amber-700 hover:bg-amber-50 transition-all duration-200 hover:scale-[1.02]"
+                                className="col-span-2 w-full inline-flex justify-center py-3 px-4 border border-amber-200 rounded-xl shadow-sm bg-white/80 backdrop-blur-sm text-sm font-medium text-amber-700 hover:bg-amber-50 transition-all duration-200 hover:scale-[1.02]"
+                                onClick={() => handleSocialLogin('google')}
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -124,7 +181,7 @@ export default function LoginPage() {
                                 </svg>
                                 <span className="ml-2">Google</span>
                             </button>
-                            <button
+                            {/* <button
                                 type="button"
                                 className="w-full inline-flex justify-center py-3 px-4 border border-amber-200 rounded-xl shadow-sm bg-white/80 backdrop-blur-sm text-sm font-medium text-amber-700 hover:bg-amber-50 transition-all duration-200 hover:scale-[1.02]"
                             >
@@ -132,17 +189,22 @@ export default function LoginPage() {
                                     <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
                                 </svg>
                                 <span className="ml-2">Twitter</span>
-                            </button>
+
+                            </button> */}
                         </div>
+
                     </div>
 
                     {/* Sign Up Link */}
                     <div className="mt-8 text-center">
                         <p className="text-sm text-amber-700">
-                            Don't have an account?{' '}
-                            <button className="font-semibold text-amber-600 hover:text-amber-500 transition-colors">
-                                Sign up for free
-                            </button>
+                            Don&apos;t have an account?{' '}
+                            <Link href="/signup">
+                                <button className="font-semibold text-amber-600 hover:text-amber-500 transition-colors">
+                                    Sign up for free
+                                </button>
+                            </Link>
+
                         </p>
                     </div>
                 </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
+import NextAuthSession from "./NextAuthSession";
+import { Toaster } from "@/components/ui/sonner";
 
 // Use the Lato font
 const lato = Lato({
@@ -22,7 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lato.variable} font-sans antialiased`}>
+        <NextAuthSession>
         {children}
+        <Toaster />
+        </NextAuthSession>
       </body>
     </html>
   );

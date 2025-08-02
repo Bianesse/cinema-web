@@ -49,7 +49,7 @@ export default function Footer() {
             </div>
           </div>
           <div className="border-t border-amber-800 mt-8 pt-8 text-center text-amber-300">
-            <p>&copy; 2025 CinemaMax. All rights reserved.</p>
+            <p>&copy; 2025 Cinemax. All rights reserved.</p>
           </div>
         </div>
       </footer>
