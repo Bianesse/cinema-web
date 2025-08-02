@@ -3,12 +3,22 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { AuthError,CredentialsSignin } from 'next-auth';
+import google from "next-auth/providers/google";
+
 
 const prisma = new PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      }
+    }),
     Credentials({
       name: "credentials",
       credentials: {
@@ -39,8 +49,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: user.role,
         };
       },
-
     }),
+
   ],
   callbacks: {
     async session({ session, token, user }) {
@@ -50,13 +60,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-    async jwt({ token, user }) {
-      // First time login, user exists
-      if (user) {
+    async jwt({ token, user, account }) {
+      // On first login
+      if (user && account?.provider === "google") {
+        // Check if user already exists
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email || "" },
+        });
+
+        // If not, create them
+        if (!existingUser) {
+          const newUser = await prisma.user.create({
+            data: {
+              name: user.name || "Unnamed",
+              email: user.email || "",
+              role: "USER", // or "ADMIN" based on logic
+              passwordHash: "", // Since no password for OAuth
+            },
+          });
+          token.role = newUser.role;
+        } else {
+          token.role = existingUser.role;
+        }
+      }
+
+      // For credentials login, role already set
+      if (user && account?.provider === "credentials") {
         token.role = user.role;
       }
+
       return token;
-    },
+    }
+
   },
   session: {
     strategy: "jwt",
