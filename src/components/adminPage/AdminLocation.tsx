@@ -1,85 +1,67 @@
 'use client'
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { 
-  Plus,
   MapPin,
   Edit,
   MoreVertical
 } from 'lucide-react';
+import { CinemaType } from '@/types';
+import AddLocationModal from '@/components/modal/AddLocationModal';
+import EditLocationModal from '@/components/modal/EditLocationModal';
+import DeleteAlert from '../alert/DeleteAlert';
+import { toast } from 'sonner';
+import LocationSkeleton from '../skeleton/LocationAdminSkeleton';
+import { LoadingDialog } from '../alert/LoadingDialog';
+import { fi } from 'zod/v4/locales';
 
 const LocationsPage = () => {
-  const locations = [
-    {
-      id: 1,
-      name: 'CinemaMax Downtown',
-      address: '123 Main St, City Center',
-      halls: 8,
-      totalSeats: 1200,
-      facilities: ['IMAX', '4DX', 'Dolby Atmos'],
-      status: 'Active',
-      occupancy: '85%'
-    },
-    {
-      id: 2,
-      name: 'CinemaMax Mall',
-      address: '456 Shopping Blvd, Mall District',
-      halls: 6,
-      totalSeats: 900,
-      facilities: ['IMAX', 'Premium Seats'],
-      status: 'Active',
-      occupancy: '72%'
-    },
-    {
-      id: 3,
-      name: 'CinemaMax Park',
-      address: '789 Park Ave, Residential Area',
-      halls: 4,
-      totalSeats: 600,
-      facilities: ['Dolby Atmos', 'VIP Lounge'],
-      status: 'Maintenance',
-      occupancy: '0%'
-    },
-    {
-      id: 4,
-      name: 'CinemaMax Plaza',
-      address: '321 Commerce St, Business District',
-      halls: 5,
-      totalSeats: 750,
-      facilities: ['IMAX', 'Dolby Atmos', 'VIP Lounge'],
-      status: 'Active',
-      occupancy: '68%'
-    },
-    {
-      id: 5,
-      name: 'CinemaMax Westside',
-      address: '654 West Ave, Westside',
-      halls: 3,
-      totalSeats: 450,
-      facilities: ['Premium Seats'],
-      status: 'Active',
-      occupancy: '91%'
-    },
-    {
-      id: 6,
-      name: 'CinemaMax North',
-      address: '987 North Blvd, North District',
-      halls: 7,
-      totalSeats: 1050,
-      facilities: ['IMAX', '4DX', 'Dolby Atmos', 'VIP Lounge'],
-      status: 'Coming Soon',
-      occupancy: '0%'
-    },
-  ];
+  const [locations, setLocations] = useState<CinemaType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [processLoading, setProcessLoading] = useState(false);
+
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch('/api/admin/locations');
+      const data = await response.json();
+      setLocations(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching locations:', error);
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    try {
+      setProcessLoading(true)
+      const response = await fetch(`/api/admin/locations`, {
+        method: 'DELETE',
+        body: JSON.stringify({ id })
+      })
+      if (!response.ok) throw new Error('Failed to delete location')
+      toast.success("Location deleted successfully!")
+      fetchLocations()
+    } catch (err) {
+      toast.error("Failed to delete location.")
+      console.error('Failed to delete location:', err)
+    }finally{
+      setProcessLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchLocations()
+  }, [])
+
+  if(loading) return <LocationSkeleton />;
 
   return (
+    <>
+    <LoadingDialog open={processLoading} />
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold text-amber-900">Cinema Locations</h2>
-        <button className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all">
-          <Plus className="w-4 h-4" />
-          <span>Add Location</span>
-        </button>
+        <AddLocationModal fetchCinemas={fetchLocations} />
       </div>
 
       {/* Locations Grid */}
@@ -89,12 +71,8 @@ const LocationsPage = () => {
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-lg font-semibold text-amber-900">{location.name}</h3>
               <div className="flex items-center space-x-1">
-                <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button className="p-1 text-amber-600 hover:bg-amber-100 rounded">
-                  <MoreVertical className="w-4 h-4" />
-                </button>
+                <EditLocationModal cinema={location} fetchCinemas={fetchLocations} />
+                <DeleteAlert handleDelete={() => handleDelete(location.id)} />
               </div>
             </div>
 
@@ -107,7 +85,7 @@ const LocationsPage = () => {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-amber-600">Halls</p>
-                  <p className="font-semibold text-amber-900">{location.halls}</p>
+                  <p className="font-semibold text-amber-900">{location.totalHalls}</p>
                 </div>
                 <div>
                   <p className="text-amber-600">Total Seats</p>
@@ -126,7 +104,7 @@ const LocationsPage = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t border-amber-100">
+              {/* <div className="flex justify-between items-center pt-3 border-t border-amber-100">
                 <div>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     location.status === 'Active' ? 'bg-green-100 text-green-800' :
@@ -141,12 +119,14 @@ const LocationsPage = () => {
                   <p className="text-amber-600 text-xs">Occupancy</p>
                   <p className="font-semibold text-amber-900">{location.occupancy}</p>
                 </div>
-              </div>
+              </div> */}
+              
             </div>
           </div>
         ))}
       </div>
     </div>
+    </>
   );
 };
 
