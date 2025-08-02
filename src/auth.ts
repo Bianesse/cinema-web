@@ -3,11 +3,21 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import google from "next-auth/providers/google";
 
 const prisma = new PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      }
+    }),
     Credentials({
       name: "credentials",
       credentials: {
@@ -38,8 +48,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: user.role,
         };
       },
-
     }),
+
   ],
   callbacks: {
     async session({ session, token, user }) {
