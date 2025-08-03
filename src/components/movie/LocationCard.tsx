@@ -1,16 +1,11 @@
+import { CinemaType } from "@/types";
 import { MapPin } from "lucide-react";
 import { toast } from "sonner";
 
-interface Cinema {
-  name: string;
-  location: string;
-  halls: number;
-  facilities: string[];
-}
 
 interface LocationCardProps {
   index: number;
-  cinema: Cinema;
+  cinema: CinemaType;
 }
 
 export default function LocationCard({ index, cinema }: LocationCardProps) {
@@ -21,7 +16,7 @@ export default function LocationCard({ index, cinema }: LocationCardProps) {
         <h3 className="text-xl font-bold text-amber-900">{cinema.name}</h3>
       </div>
       <p className="text-amber-700 mb-3">{cinema.location}</p>
-      <p className="text-sm text-amber-600 mb-4">{cinema.halls} Halls Available</p>
+      <p className="text-sm text-amber-600 mb-4">{cinema.totalHalls} Halls Available</p>
       <div className="flex flex-wrap gap-2 mb-4">
         {cinema.facilities.map((facility: string, i: number) => (
           <span key={i} className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm">
