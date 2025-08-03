@@ -89,14 +89,16 @@ const CinemaLandingPage = () => {
             Premium movie experiences with cutting-edge technology and comfort
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-lg text-lg font-semibold transition-all transform hover:scale-105 shadow-2xl"
-            onClick={() => toast.warning("Fitur ini masih dalam pengembangan")}>
-              Book Tickets Now
-            </button>
+            {/* <Link href="/movies">
+              <button className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-lg text-lg font-semibold transition-all transform hover:scale-105 shadow-2xl">
+                Book Tickets Now
+              </button>
+            </Link>
+
             <button className="px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-amber-900 rounded-lg text-lg font-semibold transition-all"
-            onClick={() => toast.warning("Fitur ini masih dalam pengembangan")}>
+              onClick={() => toast.warning("Fitur ini masih dalam pengembangan")}>
               View Showtimes
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -189,14 +191,15 @@ const CinemaLandingPage = () => {
             Book your tickets now and enjoy premium movie experiences with state-of-the-art technology
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-white text-amber-800 rounded-lg text-lg font-semibold hover:bg-amber-50 transition-all transform hover:scale-105"
-            onClick={() => toast.warning("Fitur ini masih dalam pengembangan")}>
+          <Link href="/movies">
+            <button className="px-8 py-4 bg-white text-amber-800 rounded-lg text-lg font-semibold hover:bg-amber-50 transition-all transform hover:scale-105">
               Book Tickets
             </button>
+            </Link>
             <Link href="/movies" >
-            <button className="px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-amber-800 rounded-lg text-lg font-semibold transition-all">
-              Browse Movies
-            </button>
+              <button className="px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-amber-800 rounded-lg text-lg font-semibold transition-all">
+                Browse Movies
+              </button>
             </Link>
           </div>
         </div>

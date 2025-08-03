@@ -1,27 +1,45 @@
 'use client'
-import { CinemaType, MovieType } from "@/types";
+import { CinemaType, MovieType, ShowDateType } from "@/types";
 import { use, useEffect, useState } from "react";
 import MovieDetailSkeleton from "@/components/skeleton/MovieDetailSkeleton";
 import { ChevronDown, CirclePlay, User } from "lucide-react";
 import { toast } from "sonner";
 import PlayTrailerModal from "@/components/modal/PlayTrailerModal";
+import BookingDialog from "@/components/alert/BookingDialog";
 
 export default function Movie({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [movie, setMovie] = useState<MovieType | null>(null);
     const [cinema, setCinema] = useState<CinemaType[]>([]);
+    const [showdates, setShowdates] = useState<ShowDateType[]>([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<'Schedule' | 'Detail'>('Schedule');
+    const [openIndex, setOpenIndex] = useState<number | null>(null)
+    const [selectedDate, setSelectedDate] = useState<string | null>(null)
+    const toggleDropdown = (index: number) => {
+        setOpenIndex(openIndex === index ? null : index)
+    }
 
     useEffect(() => {
-        fetch(`/api/movie/${id}`)
-            .then((res) => res.json())
-            .then((data) => {
+        const fetchMovieData = async () => {
+            setLoading(true);
+            try {
+                const res = await fetch(`/api/movie/${id}?date=${selectedDate}`);
+                if (!res.ok) throw new Error("Failed to fetch data");
+
+                const data = await res.json();
                 setMovie(data.movie);
                 setCinema(data.cinemas);
+                setShowdates(data.showdates);
+            } catch (error) {
+                console.error("Error fetching movie data:", error);
+            } finally {
                 setLoading(false);
-            });
-    }, []);
+            }
+        };
+
+        fetchMovieData();
+    }, [selectedDate]);
 
     if (!movie) {
         return <MovieDetailSkeleton />; // or your skeleton
@@ -102,18 +120,64 @@ export default function Movie({ params }: { params: Promise<{ id: string }> }) {
 
                 {/* Schedule Section */}
                 {selected === 'Schedule' && (
-                    <div className="mt-4">
+                    <div className="mt-4 space-y-2">
+                        <div className="flex gap-4 overflow-x-auto py-2 px-1 snap-x snap-mandatory scroll-smooth">
+                            {showdates.map((showdate, index) => (
+                                <button
+                                    key={index}
+                                    className={`w-16 h-16 flex-shrink-0 snap-start rounded-lg border flex flex-col items-center justify-center shadow-sm transition-all ${selectedDate === showdate.date
+                                        ? "bg-amber-700 text-white border-amber-700"
+                                        : "bg-white text-amber-900 border-amber-300 hover:bg-amber-100"
+                                        }`}
+                                    onClick={() => setSelectedDate(showdate.date)}
+                                >
+                                    <span className="text-lg font-bold">{showdate.day}</span>
+                                    <span className="text-xs">{showdate.month}</span>
+                                </button>
+                            ))}
+                        </div>
+
+
                         <div className="flex flex-col gap-4">
-                            {cinema.map((cinema: CinemaType, index: number) => (
-                                <div key={index} className="p-5 w-full rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all cursor-pointer"
-                                onClick={() => toast.warning("Fitur ini masih dalam pengembangan")}>
-                                    <div className="flex items-start justify-between">
-                                        <div>
-                                            <p className="text-xl font-bold text-amber-900">{cinema.name}</p>
-                                            <p className="text-sm text-amber-700">{cinema.location}</p>
+                            {cinema.map((cinema, index) => (
+                                <div key={index} className="relative">
+                                    {/* Card */}
+                                    <div
+                                        onClick={() => toggleDropdown(index)}
+                                        className="p-5 w-full rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all cursor-pointer"
+                                    >
+                                        <div className="flex items-start justify-between">
+                                            <div>
+                                                <p className="text-xl font-bold text-amber-900">{cinema.name}</p>
+                                                <p className="text-sm text-amber-700">{cinema.location}</p>
+                                            </div>
+                                            <ChevronDown className={`my-auto transition-transform ${openIndex === index ? "rotate-180" : ""}`} />
                                         </div>
-                                        <ChevronDown className="my-auto" />
                                     </div>
+
+                                    {/* Dropdown (relative) */}
+                                    {openIndex === index && (
+                                        <div className="mt-2 ml-2 p-4 rounded-lg border border-amber-100 bg-amber-50 shadow-inner">
+                                            <p className="font-semibold text-amber-800 mb-2">Available Halls & Showtimes</p>
+                                            {cinema.halls ? (
+                                                cinema.halls.map((hall, i) => (
+                                                    <div key={i} className="mb-2">
+                                                        <div className="flex justify-between">
+                                                            <p className="text-sm font-medium text-amber-900">{hall.hallName}</p>
+                                                            <p className="text-sm font-medium text-amber-900">Price: {hall.showtimes[0].price}</p>
+                                                        </div>
+                                                        <div className="flex flex-wrap gap-2 mt-1">
+                                                            {hall.showtimes.map((time, j) => (
+                                                                <BookingDialog key={j} index={j} time={time} halls={hall} cinema={cinema} />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-sm text-amber-600 italic">No halls or showtimes yet.</p>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

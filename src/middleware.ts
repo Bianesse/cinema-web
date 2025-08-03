@@ -19,9 +19,11 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  if (pathname.startsWith("/movies/booking")) {
+    if (!session?.user) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+  }
+
   return NextResponse.next();
 }
-
-export const config = {
-  matcher: ["/admin/:path*", "/login"],
-};
