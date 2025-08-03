@@ -1,17 +1,9 @@
+import { MovieType } from "@/types";
 import { Clock } from "lucide-react";
 
-interface Movie {
-    id: number;
-    title: string;
-    genre: string[];
-    rating: string;
-    duration: number;
-    posterUrl: string;
-    synopsis: string
-}
 interface MovieCardProps {
     index: number
-    movie: Movie
+    movie: MovieType
 }
 
 export default function MovieCard({ index, movie, }: MovieCardProps) {
