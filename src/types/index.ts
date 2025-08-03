@@ -26,6 +26,7 @@ export interface CinemaType {
   facilities: string[];
   createdAt: Date;
   halls: HallType[];
+  totalSeats?: number;
 }
 
 
