@@ -33,61 +33,43 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
     selectedDate = firstDate?.showDate?.toISOString().split('T')[0] ?? new Date().toISOString().split('T')[0];
   }
 
-
-
-
-  const cinemas = await prisma.cinema.findMany({
+  const movie = await prisma.movie.findUnique({
     where: {
-      halls: {
-        some: {
-          showtimes: {
-            some: {
-              movieId: id,
-              showDate: new Date(selectedDate),
-            },
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-      name: true,
-      location: true,
-      halls: {
-        where: {
-          showtimes: {
-            some: {
-              showDate: new Date(selectedDate),
-              movieId: id,
-            },
-          },
-        },
-        select: {
-          id: true,
-          hallName: true,
-          showtimes: {
-            where: {
-              movieId: id,
-              showDate: new Date(selectedDate),
-            },
-            select: {
-              id: true,
-              showDate: true,
-              showTime: true,
-              price: true,
-            },
-            orderBy: {
-              showTime: 'asc',
-            },
-          },
-        },
-      },
+      id: id,
     },
   });
 
+  const showDatesQuery = await prisma.showtime.findMany({
+    where: {
+      movieId: id,
+    },
+    distinct: ['showDate'],
+    select: {
+      showDate: true,
+    },
+    orderBy: {
+      showDate: 'asc',
+    },
+  });
+
+  const showdates = showDatesQuery.map(({ showDate }) => {
+    const date = new Date(showDate);
+    const day = date.getDate(); // 1-31
+    const month = date.toLocaleString("en-US", { month: "long" }); // e.g., "August"
+    const year = date.getFullYear(); // 2025
+
+    return { date, day, month, year };
+  });
+
+  if (!movie) {
+    return new Response(JSON.stringify({ error: "Movie not found" }), {
+      status: 404,
+    });
+  }
 
   return NextResponse.json({
-    cinemas,
+    movie,
+    showdates,
   }
   );
 }
