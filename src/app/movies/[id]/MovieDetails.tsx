@@ -24,10 +24,6 @@ export default function MovieDetail({ movie, id, showdates }: Props) {
         setOpenIndex(openIndex === index ? null : index);
     };
 
-    if (!movie) {
-        return <MovieDetailSkeleton />;
-    }
-
     const formattedDate = new Date(movie.releaseDate).toLocaleDateString(
         "en-US",
         { year: "numeric", month: "long", day: "numeric" }
